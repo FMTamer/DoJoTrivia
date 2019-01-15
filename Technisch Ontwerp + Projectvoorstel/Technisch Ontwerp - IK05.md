@@ -6,20 +6,20 @@
 **Hier wordt gecontrolleerd of de username en email uniek zijn en verder worden alle ingevoerde gegevens in de database gezet.**
 @app.route("/register", methods=["GET", "POST"])
 def register():
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;db.execute("INSERT INTO users (username, email, hash) VALUES(:username, :email, :hash)", &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;username=request.form.get("username"), hash=pwd_context.encrypt(request.form.get("password", &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email=request.form.get("email"))))
+db.execute("INSERT INTO users (username, email, hash) VALUES(:username, :email, :hash)", username=request.form.get("username"), hash=pwd_context.encrypt(request.form.get("password", email=request.form.get("email"))))
 
 ##### Login:
 **Hier wordt gecontroleerd of de username en wachtwoord aan elkaar gekoppeld zijn in de database en wordt de gebruiker doorverwezen naar de index.**
 @app.route("/login", methods=["GET", "POST"])
 def login():
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pwd_context.verify(request.form.get("password"), rows[0]["hash"])
+db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+pwd_context.verify(request.form.get("password"), rows[0]["hash"])
 
 ##### Logout:
 **Gebruiker wordt hier uitgelogd en de huidige sessie verbroken.**
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;session.clear()
+session.clear()
 
 ##### Contact:
 **Na het invullen van alle formulier gegevens wordt in deze route de velden verstuurd via de mail naar de developers van de pagina.**
