@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Contact
+{% endblock %}
+
+{% block main %}
+    <br>
+    <head>
+        <h1><strong>Contact Us</strong></h1>
+    </head>
+    <hr class="line_title">
+    <br>
+    <p>
+        Test123
+    </p>
+    <br>
+    <form action="{{ url_for('contact') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="emailaddress" placeholder="E-mail" type="email"/>
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="message" placeholder="Type your message in here!" type="textarea"/>
+            </div>
+            <br>
+            <div class="form-group">
+                <button class="btn btn-default" type="submit">Send Message</button>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}
