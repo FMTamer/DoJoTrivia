@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Joining
+{% endblock %}
+
+{% block main %}
+    <br>
+
+    <head>
+        <h1><strong>Joining</strong></h1>
+    </head>
+    <hr class="line_title">
+    <br>
+    <form action="{{ url_for('joining') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
+            </div>
+            <br>
+            <div class="form-group">
+                <button class="btn btn-default" type="submit">Join</button>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}
