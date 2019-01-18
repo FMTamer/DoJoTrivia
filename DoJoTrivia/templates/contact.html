@@ -9,7 +9,7 @@
        <div class="container">
            <h3 class="text-center text-uppercase">contact us</h3>
            <div class="row">
-             <div class="col-sm-12 col-md-6 col-lg-3 my-5 mx-auto">
+             <div class="col-sm-12 col-md-6 col-lg-3 mb-3 mt-5 mx-auto">
                <div class="card border-0">
                   <div class="card-body text-center">
                     <img src="static/contact_phone.png" class="img-fluid" alt="Responsive image" aria-hidden="true" height="75px" width="75px">
@@ -19,15 +19,15 @@
                   </div>
                 </div>
              </div>
-             <div class="col-sm-12 col-md-6 col-lg-3 my-3 mx-auto">
+             <div class="col-sm-12 col-md-6 col-lg-3 my-5 mx-auto">
                   <div class="card-body text-center">
                     <img src="http://www.clker.com/cliparts/3/7/f/2/11949849191060543666simbolo_giapponese_archi_01.svg.med.png" width="200px" height="200px" alt="Responsive image">
                   </div>
              </div>
-             <div class="col-sm-12 col-md-6 col-lg-3 my-5 mx-auto">
+             <div class="col-sm-12 col-md-6 col-lg-3 mb-4 mt-5 mx-auto">
                <div class="card border-0">
                   <div class="card-body text-center">
-                    <img src="static/contact_mail.png" class="img-fluid" alt="Responsive image" aria-hidden="true" height="75px" width=75px">
+                    <img src="static/contact_mail.png" class="img-fluid" alt="Responsive image" aria-hidden="true" height="75px" width="75px">
                     <h4 class="text-uppercase pt-4">Mail us</h4>
                    <p>> Jemoeder@gmail.com</p>
                    <p>> mijnmoeder@gmail.com</p>
@@ -59,7 +59,7 @@
                 <input class="form-control" name="emailaddress" placeholder="E-mail" type="email"/>
             </div>
             <div class="form-group">
-                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Type your message in here!" rows="4"></textarea>
+                <textarea class="form-control" id="contact_message" placeholder="Type your message in here!" rows="4"></textarea>
              </div>
             <br>
             <div class="form-group">
@@ -69,74 +69,4 @@
     </form>
 
 {% endblock %}
-{% extends "layout.html" %}
 
-{% block title %}
-    Contact
-{% endblock %}
-
-{% block main %}
-    <section id="contact">
-       <div class="container">
-           <h3 class="text-center text-uppercase">contact us</h3>
-           <div class="row">
-             <div class="col-sm-12 col-md-6 col-lg-3 my-5 mx-auto">
-               <div class="card border-0">
-                  <div class="card-body text-center">
-                    <img src="static/contact_phone.png" class="img-fluid" alt="Responsive image" aria-hidden="true" height="75px" width="75px">
-                    <h4 class="text-uppercase pt-4">Call us</h4>
-                    <p>> 0900-jemoeder</p>
-                    <p>> 0900-mijnmoeder</p>
-                  </div>
-                </div>
-             </div>
-             <div class="col-sm-12 col-md-6 col-lg-3 my-3 mx-auto">
-                  <div class="card-body text-center">
-                    <img src="http://www.clker.com/cliparts/3/7/f/2/11949849191060543666simbolo_giapponese_archi_01.svg.med.png" width="200px" height="200px" alt="Responsive image">
-                  </div>
-             </div>
-             <div class="col-sm-12 col-md-6 col-lg-3 my-5 mx-auto">
-               <div class="card border-0">
-                  <div class="card-body text-center">
-                    <img src="static/contact_mail.png" class="img-fluid" alt="Responsive image" aria-hidden="true" height="75px" width=75px">
-                    <h4 class="text-uppercase pt-4">Mail us</h4>
-                   <p>> Jemoeder@gmail.com</p>
-                   <p>> mijnmoeder@gmail.com</p>
-                  </div>
-                </div>
-             </div>
-           </div>
-       </div>
-    </section>
-
-
-    <br>
-    <form action="{{ url_for('contact') }}" method="post">
-        <fieldset>
-            <h5 class="contact_form_desc">Below you can also send us a message to get in touch with us. Make sure to fill in all the fields and we will make sure to respond within 24 hours.</h5>
-            <div class="form-group">
-                <select class="form-control" id="FormSelectReason">
-                    <option disabled selected value>Select Reason</option>
-                    <option>Report a bug</option>
-                    <option>Bust that down thotiana</option>
-                    <option>Suggestions</option>
-                    <option>Other reason</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text"/>
-            </div>
-            <div class="form-group">
-                <input class="form-control" name="emailaddress" placeholder="E-mail" type="email"/>
-            </div>
-            <div class="form-group">
-                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Type your message in here!" rows="4"></textarea>
-             </div>
-            <br>
-            <div class="form-group">
-                <button class="btn btn-default" type="submit">Send Message</button>
-            </div>
-        </fieldset>
-    </form>
-
-{% endblock %}

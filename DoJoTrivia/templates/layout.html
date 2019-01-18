@@ -10,30 +10,35 @@
         <!-- documentation at http://getbootstrap.com1/, alternative themes at https://www.bootstrapcdn.com/bootswatch/ -->
         <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.2.1/slate/bootstrap.min.css" rel="stylesheet"/>
 
-        <link href="{{ url_for('static', filename='static/styles.css') }}" rel="stylesheet"/>
+        <link href="{{ url_for('static', filename='test.css') }}" rel="stylesheet"/>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-        <title>DoJoTrivia: {% block title %}{% endblock %}</title>
+        <title>DoJoTrivia - {% block title %}{% endblock %}</title>
+        <script>
+          function openNav() {
+          document.getElementById("mySidebar").style.width = "250px";
+          document.getElementById("main").style.marginLeft = "250px";}
 
+          function closeNav() {
+          document.getElementById("mySidebar").style.width = "0";
+          document.getElementById("main").style.marginLeft= "0";}
+          </script>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="#">
-            <img src="http://www.clker.com/cliparts/3/7/f/2/11949849191060543666simbolo_giapponese_archi_01.svg.med.png" width="30" height="30" alt="">
-          DoJo</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="contact">Contact</a></li>
-              <li class="nav-item"><a class="nav-link" href="about">About</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">placeholder</a></li>
-            </ul>
+          <div id="mySidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+              <a href="#"><p style="text-align: left;"><img src="static/logo.png" alt="" width="40" height="40" /><br /> The DoJo Menu<hr></p></a>
+              <a href="#">Home</a>
+              <a href="register">Register</a>
+              <a href="contact">Contact</a>
+              <a href="about-us">About Us</a>
           </div>
+          <div id="main">
+            <button class="openbtn" onclick="openNav()">☰         <img src="https://i.imgur.com/LhPSPil.png" alt="" width="25" height="25" /> DOJO Trivia</button>
+            </div>
         </nav>
         <main>
             <div class="container">
