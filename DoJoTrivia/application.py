@@ -21,3 +21,15 @@ def contact():
 @app.route("/about-us")
 def aboutus():
     return render_template("about-us.html")
+
+@app.route("/createquiz")
+def creategame():
+    return render_template("createquiz.html")
+
+@app.route("/joingame")
+def joingame():
+    return render_template("joining.html")
+
+@app.route("/personal")
+def personal():
+    return render_template("personal-page.html")
