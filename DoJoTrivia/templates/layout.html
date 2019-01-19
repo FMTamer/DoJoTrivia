@@ -9,7 +9,6 @@
 
         <!-- documentation at http://getbootstrap.com1/, alternative themes at https://www.bootstrapcdn.com/bootswatch/ -->
         <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.2.1/lux/bootstrap.min.css" rel="stylesheet"/>
-
         <link href="{{ url_for('static', filename='test.css') }}" rel="stylesheet"/>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -26,7 +25,6 @@
           document.getElementById("main").style.marginLeft= "0";}
           </script>
     </head>
-    <body>
 
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -34,11 +32,12 @@
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
               <p style="text-align: center;"><img src="static/logo.png" alt="" width="40" height="40" /><br /></p>
               <h2>The DoJo Menu</h2>
-              <a href="#">Home</a>
+              <a href="/">Home</a>
               <a href="register">Register</a>
               <a href="contact">Contact</a>
               <a href="about-us">About Us</a>
               <a href="createquiz">Create Quiz</a>
+              <a href="personal">Your Page</a>
           </div>
           <div id="main">
             <button class="openbtn" onclick="openNav()">☰         <img src="https://i.imgur.com/LhPSPil.png" alt="" width="25" height="25" /> DOJO Trivia</button>
