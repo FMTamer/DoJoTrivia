@@ -77,9 +77,9 @@ def makeq():
     return render_template("makeq.html")
 
 @app.route("/results")
-def makeq():
+def results():
     return render_template("results.html")
 
 @app.route("/answer")
-def makeq():
+def answer():
     return render_template("answer.html")
