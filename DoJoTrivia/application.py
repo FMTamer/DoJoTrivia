@@ -75,3 +75,11 @@ def joingame():
 @app.route("/makeq")
 def makeq():
     return render_template("makeq.html")
+
+@app.route("/results")
+def makeq():
+    return render_template("results.html")
+
+@app.route("/answer")
+def makeq():
+    return render_template("answer.html")
