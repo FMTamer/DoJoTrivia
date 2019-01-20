@@ -56,18 +56,22 @@ def contact():
 def aboutus():
     return render_template("about-us.html")
 
+@app.route("/personal")
+def personal():
+    return render_template("personal-page.html")
+
 @app.route("/createquiz")
-def creategame():
+def createquiz():
     return render_template("createquiz.html")
+
+@app.route("/creategame")
+def creategame():
+    return render_template("creategame.html")
 
 @app.route("/joingame")
 def joingame():
     return render_template("joining.html")
 
-@app.route("/personal")
-def personal():
-    return render_template("personal-page.html")
-
-
-
-
+@app.route("/makeq")
+def makeq():
+    return render_template("makeq.html")
