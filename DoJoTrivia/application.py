@@ -6,17 +6,38 @@ from tempfile import mkdtemp
 
 app = Flask(__name__)
 
+def apology(message):
+    """Renders message as an apology to user."""
+    def escape(s):
+        """
+        Escape special characters.
+
+        https://github.com/jacebrowning/memegen#special-characters
+        """
+        for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
+                         ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
+            s = s.replace(old, new)
+        return s
+    return render_template("apology.html", bottom=escape(message))
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "POST":
+        if not request.form.get("username") or not request.form.get("password") or not request.form.get("confirmation") or not request.form.get("emailaddress"):
+            return apology("Make sure to fill out all fields!")
+        elif request.form.get("password") != request.form.get("confirmation"):
+            return apology("Passwords do not match!")
+    else:
+        return render_template("register.html")
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template("contact.html")
+    if request.method == "GET":
+        return render_template("contact.html")
 
 @app.route("/about-us")
 def aboutus():
@@ -33,3 +54,7 @@ def joingame():
 @app.route("/personal")
 def personal():
     return render_template("personal-page.html")
+
+
+
+
