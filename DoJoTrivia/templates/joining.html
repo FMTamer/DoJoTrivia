@@ -1,21 +1,21 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Joining
+    Join Game
 {% endblock %}
 
 {% block main %}
     <br>
 
     <head>
-        <h1><strong>Joining</strong></h1>
+        <h1><strong>Join Game</strong></h1>
     </head>
     <hr class="line_title">
     <br>
     <form action="{{ url_for('joingame') }}" method="post">
         <fieldset>
             <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
+                <input autocomplete="off" autofocus class="form-control" name="roomnum" placeholder="Roomnumber" type="text"/>
             </div>
             <br>
             <div class="form-group">
