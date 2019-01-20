@@ -5,6 +5,7 @@ from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
 
 app = Flask(__name__)
+db = SQL("sqlite:///dojo.db")
 
 def apology(message):
     """Renders message as an apology to user."""
@@ -29,8 +30,20 @@ def register():
     if request.method == "POST":
         if not request.form.get("username") or not request.form.get("password") or not request.form.get("confirmation") or not request.form.get("emailaddress"):
             return apology("Make sure to fill out all fields!")
+
         elif request.form.get("password") != request.form.get("confirmation"):
             return apology("Passwords do not match!")
+
+        # Executes database into result and hashes the password
+        result = db.execute("INSERT INTO users (username, hash_password, email) VALUES(:username, :hash_password, :email)",
+        username=request.form.get("username"), hash_password=pwd_context.hash(request.form.get("password")), email=request.form.get("emailaddress"))
+        # Checks if username already exists in database
+        if not result:
+            return apology("Either username or email already taken!")
+
+        # query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+        return render_template("personal-page.html")
     else:
         return render_template("register.html")
 
