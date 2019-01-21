@@ -3,6 +3,8 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from flask_session import Session
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
+import random
+from helpers import *
 
 app = Flask(__name__)
 db = SQL("sqlite:///dojo.db")
@@ -12,20 +14,6 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-
-def apology(message):
-    """Renders apology message on the apology.html website."""
-    def escape(s):
-        """ cccccc
-        Escape special characters.
-
-        https://github.com/jacebrowning/memegen#special-characters
-        """
-        for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
-                         ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
-            s = s.replace(old, new)
-        return s
-    return render_template("apology.html", bottom=escape(message))
 
 
 @app.route("/")
@@ -89,9 +77,22 @@ def personal():
 def createquiz():
     return render_template("createquiz.html")
 
-@app.route("/creategame")
+@app.route("/creategame", methods=["GET", "POST"])
+
 def creategame():
-    return render_template("creategame.html")
+    if request.method == "GET":
+        return render_template("creategame.html")
+    else:
+        get_userID = db.execute("SELECT user_ID FROM users")
+        create_room = db.execute("SELECT game_room FROM game")
+
+        room_ID = random.randint(1,5000)
+        if room_ID not in create_room:
+            while room_ID in create_room:
+                room_ID = random.randint(1,5000)
+        db.execute("INSERT INTO game (player_ID1, game_room, completed) VALUES(:get_userID, :room_ID, 0)",
+            get_userID = get_userID[0]["user_ID"], room_ID = room_ID)
+        return redirect(url_for("answer"))
 
 @app.route("/joingame")
 def joingame():

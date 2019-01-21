@@ -11,10 +11,11 @@
     </head>
     <hr class="line_title">
     <br>
-    <div class="button-box col-lg-12">
-        <a href="joingame" class="btn btn-info" role="button">Join Game</a>
-        <a href="creategame" class="btn btn-info" role="button">Create Game</a>
-    </div>
+    <form action="{{ url_for('creategame') }}" name="creating" method="post">
+        <div class="form-group">
+            <button class="btn btn-info" type="submit">Create game</button>
+        </div>
+    </form>
     <br>
 
     <h3><strong>Match History</strong></h3>
