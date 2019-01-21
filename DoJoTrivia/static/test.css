@@ -78,3 +78,13 @@ head
   .sidebar {padding-top: 15px;}
   .sidebar a {font-size: 18px;}
 }
+
+/* "Override bootstrap form css"
+main .form-control
+{
+    display: inline-block;
+    width: auto;
+}
+
+
+
