@@ -67,13 +67,7 @@ head
   background-color: #444;
 }
 
-nav{
-  padding:none;
-}
 
-.navbar .navbar-expand-lg .navbar-dark .bg-dark{
-  padding: none;
-}
 
 
 #main {
@@ -93,6 +87,7 @@ main .form-control
     display: inline-block;
     width: auto;
 }
+*/
 
-
+p{text-align:left;}
 
