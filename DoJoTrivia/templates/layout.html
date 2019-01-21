@@ -31,7 +31,7 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style='padding: 0px; margin: 0px'>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark"  style='padding: 0px; margin: 0px'>
 
           <div id="mySidebar" class="sidebar">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
@@ -58,17 +58,18 @@
                 <a href="logout">Log Out</a>
               {% endif %}
           </div>
+        </nav>
 
-
+        <nav class="navbar navbar-inverse navbar-dark bg-dark margtop">
           <div id="main">
               <button class="openbtn" onclick="openNav()">☰         <img src="https://i.imgur.com/LhPSPil.png" alt="" width="25" height="25" />   DOJO Trivia</button>
           </div>
              {% if not session.user_id %}
              <form action="{{ url_for('login') }}" name="login_form" method="post" class='float-right'>
                   <fieldset>
-                          <div class="form-group" style='margin-bottom: 0px;'>
-                              <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text"/>
-                              <input autocomplete="off" class="form-control" name="password" placeholder="Password" type="password"/>
+                          <div class="form-group margtop" style='margin-bottom: 0px;'>
+                              <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text" style='margin-bottom: 1rem;'/>
+                              <input autocomplete="off" class="form-control" name="password" placeholder="Password" type="password" style='margin-bottom: 1rem;'/>
                               <button class="btn btn-default" type="submit">Log In</button>
                           </div>
                   </fieldset>
