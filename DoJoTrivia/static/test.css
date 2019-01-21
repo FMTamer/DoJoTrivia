@@ -53,7 +53,7 @@ head
   margin-left: 50px;
 }
 
-
+/* Collapsed navbar*/
 .openbtn {
   font-size: 20px;
   cursor: pointer;
@@ -67,10 +67,18 @@ head
   background-color: #444;
 }
 
+nav{
+  padding:none;
+}
+
+.navbar .navbar-expand-lg .navbar-dark .bg-dark{
+  padding: none;
+}
+
 
 #main {
   transition: margin-left .5s;
-  padding: 20px;
+  padding: 0px;
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
