@@ -23,5 +23,16 @@ def apology(message):
         return s
     return render_template("apology.html", bottom=escape(message))
 
+def login_required(f):
+    """
+    Decorate routes to require login.
 
+    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return apology("You have to be logged in to visit this page!")
+        return f(*args, **kwargs)
+    return decorated_function
 
