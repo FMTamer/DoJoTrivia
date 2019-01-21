@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block main %}
+    <div class="form-group">
+              <input autocomplete="off" class="form-control" name="Username" placeholder="Username" type="text"/>
+        </div>
+        <div class="form-group" style="align:center">
+              <input autocomplete="off" class="form-control" name="Password" placeholder="Password" type="password"/>
+        </div>
+        <div class="form-group">
+                <button class="btn btn-default" type="submit">Log In</button>
+    </div>
     <br>
     <head>
         <h1><strong>Welcome to DoJoTrivia!</strong></h1>
@@ -23,7 +32,7 @@
                 <img src="static/logo.png" align="center" height='150px' width='150px'/>
                 <br>
                 <br>
-                <p style='text-align:left'>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Vestibulum quis semper mi, nec euismod dui. In quis libero ac ante tempus tincidunt.
                 Mauris venenatis posuere ante at iaculis. Nulla eleifend rutrum dui,
                 finibus venenatis nibh sollicitudin id. Sed pretium tellus ante,
@@ -40,15 +49,5 @@
         </div>
         <br>
         <br>
-        <form action="{{ url_for('login') }}" name="login_form" method="post">
-        <div class="form-group" style="align:center">
-              <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text"/>
-        </div>
-        <div class="form-group" style="align:center">
-              <input autocomplete="off" class="form-control" name="password" placeholder="Password" type="password"/>
-        </div>
-        <div class="form-group">
-                <button class="btn btn-default" type="submit">Log In</button>
-        </div>
     </body>
 {% endblock %}
