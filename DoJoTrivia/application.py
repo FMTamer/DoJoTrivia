@@ -4,6 +4,8 @@ from flask_session import Session
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
 import random
+import smtplib
+import os
 from helpers import *
 
 app = Flask(__name__)
@@ -84,6 +86,17 @@ def logout():
 def contact():
     if request.method == "GET":
         return render_template("contact.html")
+    else:
+        if not request.form.get("username") or not request.form.get("emailaddress") or not request.form.get("contact_message") or not request.form.get("FormSelectReason"):
+            return apology("Make sure to fill in all fields!")
+        else:
+            return apology("Thank you for your feedback!")
+            message = "Thank you for your feedback, it will be taken into consideration!"
+            server= smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login("dojopython.webik@gmail.com", os.getenv("webik2019_"))
+            server.sendmail("dojopython.webik@gmail.com", "dojotrivia@gmail.com", message)
+
 
 @app.route("/about-us")
 def aboutus():
