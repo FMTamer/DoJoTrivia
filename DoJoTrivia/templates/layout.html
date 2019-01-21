@@ -8,7 +8,7 @@
         <meta content="initial-scale=1, width=device-width" name="viewport"/>
 
         <!-- documentation at http://getbootstrap.com1/, alternative themes at https://www.bootstrapcdn.com/bootswatch/ -->
-        <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.2.1/lux/bootstrap.min.css" rel="stylesheet"/>
+        <link href='https://stackpath.bootstrapcdn.com/bootswatch/4.2.1/lux/bootstrap.min.css' rel='stylesheet'/>
         <link href="{{ url_for('static', filename='test.css') }}" rel="stylesheet"/>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -32,6 +32,7 @@
 
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style='padding: 0px; margin: 0px'>
+
           <div id="mySidebar" class="sidebar">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
               <p style="text-align: center;"><img src="static/logo.png" alt="" width="40" height="40" /><br /></p>
@@ -57,13 +58,31 @@
                 <a href="logout">Log Out</a>
               {% endif %}
           </div>
-          <div id="main" style='padding: 0px; margin: 0px'>
-            <button class="openbtn" onclick="openNav()">☰         <img src="https://i.imgur.com/LhPSPil.png" alt="" width="25" height="25" />   DOJO Trivia</button>
+
+
+          <div id="main">
+              <button class="openbtn" onclick="openNav()">☰         <img src="https://i.imgur.com/LhPSPil.png" alt="" width="25" height="25" />   DOJO Trivia</button>
+
+            {% if not session.user_id %}
+              <form action="{{ url_for('login') }}" name="login_form" method="post">
+                <fieldset>
+                  <div class="form-group">
+                        <input autocomplete="off" class="form-control" name="Username" placeholder="Username" type="text"/>
+                        <input autocomplete="off" class="form-control" name="Password" placeholder="Password" type="password"/>
+                        <button class="btn btn-default" type="submit">Log In</button>
+                  </div>
+                </fieldset>
+              </form>
+            {% endif %}
+          </div>
+
         </nav>
+
         <main>
             <div class="container">
                 {% block main %}{% endblock %}
             </div>
         </main>
+
     </body>
 </html>

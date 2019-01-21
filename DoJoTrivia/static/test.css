@@ -1,3 +1,4 @@
+
 .container
 {
     /* center contents */
@@ -70,6 +71,7 @@ head
 
 
 
+
 #main {
   transition: margin-left .5s;
   padding: 0px;
@@ -81,13 +83,18 @@ head
   .sidebar a {font-size: 18px;}
 }
 
-/* "Override bootstrap form css"
-main .form-control
+/*Form css*/
+.form-control
 {
     display: inline-block;
     width: auto;
 }
-*/
 
-p{text-align:left;}
+/*Text css*/
+p{text-align:left;
+  color: grey;
+
+}
+
+
 
