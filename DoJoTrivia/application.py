@@ -112,7 +112,7 @@ def creategame():
         if room_ID not in create_room:
             while room_ID in create_room:
                 room_ID = random.randint(1,5000)
-        db.execute("INSERT INTO game (player_ID1, game_room, completed) VALUES(:get_userID, :room_ID, 0)",
+        db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID', 'NULL', ':room_ID', 'NULL', 'NULL', 'NULL', 'NULL', '0')",
             get_userID = get_userID[0]["user_ID"], room_ID = room_ID)
         return redirect(url_for("answer"))
 
