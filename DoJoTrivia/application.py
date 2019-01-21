@@ -16,7 +16,7 @@ Session(app)
 def apology(message):
     """Renders apology message on the apology.html website."""
     def escape(s):
-        """
+        """ cccccc
         Escape special characters.
 
         https://github.com/jacebrowning/memegen#special-characters
@@ -26,6 +26,7 @@ def apology(message):
             s = s.replace(old, new)
         return s
     return render_template("apology.html", bottom=escape(message))
+
 
 @app.route("/")
 def index():
