@@ -62,6 +62,26 @@ def register():
     else:
         return render_template("register.html")
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        # Checks if the forms are filled out.
+        if not request.form.get("username") or not request.form.get("password"):
+            return apology("Make sure to fill out all fields!")
+
+        # query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+        # ensure username exists and password is correct
+
+        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash_password"]):
+            return apology("Invalid username and/or password!")
+
+        # remember which user has logged in
+        session["user_id"] = rows[0]["user_ID"]
+        return redirect(url_for("personal"))
+    else:
+        return redirect(url_for("/"))
+
 @app.route("/logout", methods=["GET"])
 def logout():
     """Log user out."""
