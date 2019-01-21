@@ -16,12 +16,18 @@
     <br>
     <table class='w-100'>
         <tr>
-            <td><button class="btn btn-default" type="submit">A</button></td>
-            <td><button class="btn btn-default" type="submit">>B</button></td>
+            <td><button class="btn btn-default" onclick='kech()'>A</button></td>
+            <td><button class="btn btn-default" onclick='kech()'>B</button></td>
         </tr>
         <tr>
-            <td><button class="btn btn-default" type="submit">C</button></td>
-            <td><button class="btn btn-default" type="submit">D</button></td>
+            <td><button class="btn btn-default" onclick='kech()'>C</button></td>
+            <td><button class="btn btn-default" onclick="kech()">D</button></td>
         </tr>
     </table>
+
+    <script>
+        function kech() {
+             document.getElementById("demo").innerHTML = "Kech 12";
+        }
+    </script>
 {% endblock %}

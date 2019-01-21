@@ -46,6 +46,7 @@ def register():
 
         # remember which user has logged in
         session["user_id"] = rows[0]["user_ID"]
+        session['username'] = rows[0]['username']
         return redirect(url_for("personal"))
     else:
         return render_template("register.html")
@@ -66,6 +67,7 @@ def login():
 
         # remember which user has logged in
         session["user_id"] = rows[0]["user_ID"]
+        session['username'] = rows[0]['username']
         return redirect(url_for("personal"))
     else:
         return redirect(url_for("/"))
@@ -92,7 +94,7 @@ def aboutus():
 @app.route("/personal")
 @login_required
 def personal():
-    return render_template("personal-page.html")
+    return render_template("personal-page.html", username = session['username'], test = session)
 
 @app.route("/createquiz")
 @login_required
