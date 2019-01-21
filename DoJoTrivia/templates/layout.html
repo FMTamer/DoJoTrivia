@@ -77,7 +77,11 @@
                           </div>
                   </fieldset>
                 </form>
+
+              {% else %}
+              <p class='username'>{{ session.username }}</p>
               {% endif %}
+
 
 
         </nav>

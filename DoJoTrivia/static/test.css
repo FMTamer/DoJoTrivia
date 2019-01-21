@@ -73,6 +73,14 @@ head
   background-color:#111 !important;
 }
 
+.username{
+  margin: 0px;
+  float: right;
+  font-size: 32px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 
 
 
@@ -81,6 +89,7 @@ head
 #main {
   transition: margin-left .5s;
   padding: 0px;
+  margin-bottom: 1rem;
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
