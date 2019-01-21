@@ -90,15 +90,17 @@ def aboutus():
     return render_template("about-us.html")
 
 @app.route("/personal")
+@login_required
 def personal():
     return render_template("personal-page.html")
 
 @app.route("/createquiz")
+@login_required
 def createquiz():
     return render_template("createquiz.html")
 
 @app.route("/creategame", methods=["GET", "POST"])
-
+@login_required
 def creategame():
     if request.method == "GET":
         return render_template("creategame.html")
@@ -115,18 +117,22 @@ def creategame():
         return redirect(url_for("answer"))
 
 @app.route("/joingame")
+@login_required
 def joingame():
     return render_template("joining.html")
 
 @app.route("/makeq")
+@login_required
 def makeq():
     return render_template("makeq.html")
 
 @app.route("/results")
+@login_required
 def results():
     return render_template("results.html")
 
 @app.route("/answer")
+@login_required
 def answer():
     return render_template("answer.html")
 
