@@ -62,7 +62,7 @@ def login():
         # ensure username exists and password is correct
 
         if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash_password"]):
-            return apology("Invalid username and-or password!")
+            return apology("Invalid username and or password!")
 
         # remember which user has logged in
         session["user_id"] = rows[0]["user_ID"]
