@@ -7,7 +7,11 @@
 {% block main %}
     <br>
     <head>
-        <h1><strong>Please choose your answer: {{ test }}</strong></h1>
+        <h1><strong>
+            Room: {{ room }}
+            <br/>
+            Please choose your answer:
+            </strong></h1>
     </head>
     <hr class="line_title">
     </hr>
@@ -25,7 +29,7 @@
         </tr>
     </table>
 
-    <h1><strong id="demo" style='text-align: center; font-size: 10rem'></strong></h1>
+    <h1><strong id="demo" class='text-center'></strong></h1>
 
     <script>
         function kech() {
