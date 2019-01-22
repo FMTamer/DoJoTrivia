@@ -55,6 +55,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # forget any user_id
+    session.clear()
+
     if request.method == "POST":
         # Checks if the forms are filled out.
         if not request.form.get("username") or not request.form.get("password"):
@@ -129,7 +132,7 @@ def joingame():
     if request.method == "GET":
         return render_template("joining.html")
     else:
-        return render_template("joining.html")
+        get_userID()
 
 @app.route("/makeq")
 @login_required
