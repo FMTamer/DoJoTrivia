@@ -39,11 +39,14 @@ def login_required(f):
 def get_userID():
     return session["user_id"]
 
+def check_room():
+    return db.execute("SELECT game_room FROM game")
+
 def generate():
     room_ID = random.randint(1000,9999)
-    check_room = db.execute("SELECT game_room FROM game")
-    if room_ID not in check_room:
-        while room_ID in check_room:
+    checked_room = check_room()
+    if room_ID not in checked_room:
+        while room_ID in checked_room:
             room_ID = random.randint(1000,9999)
     db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID1', 'NULL', ':room_ID', 'NULL', 'NULL', 'NULL', 'NULL', '0')",
         get_userID1 = get_userID(), room_ID = room_ID)
