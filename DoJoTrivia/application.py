@@ -153,12 +153,12 @@ def joingame():
         return render_template("joining.html")
     else:
         given_room = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))]
-        sqlscr =  '''UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room '''
         if given_room:
-            db.execute(sqlscr, user_ID2 = get_userID(), room = given_room)
-            return render_template('answer.html', room = given_room[0])
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = given_room)
+            return render_template('answer.html', test = given_room)
         else:
-            return apology("This room numver does not exist")
+            return apology("This room number does not exist")
+
 
 @app.route("/makeq")
 @login_required
