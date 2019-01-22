@@ -20,7 +20,10 @@ Session(app)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if session:
+        return render_template('personal-page.html')
+    else:
+        return render_template("index.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -73,7 +76,7 @@ def login():
         # remember which user has logged in
         session["user_id"] = rows[0]["user_ID"]
         session['username'] = rows[0]['username']
-        return redirect(url_for("personal"))
+        return redirect(url_for("personal", username = session['username']))
     else:
         return redirect(url_for("/"))
 
