@@ -105,9 +105,14 @@ def contact():
             receiver_email = request.form.get("emailaddress")
             password = "webik2019_"
             message = """\
-            Subject: Thanks for the feedback!
+Subject: Thank you for the feedback!
+Dear player,
 
-    Thank you for your feedback, it will be taken into consideration!"""
+Thank you for the feedback, it will be taken into consideration!
+
+Sincerely,
+
+The DoJoTrivia Team"""
 
             context = ssl.create_default_context()
             with smtplib.SMTP(smtp_server, port) as server:
