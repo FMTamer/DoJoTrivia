@@ -11,12 +11,19 @@
     </head>
     <hr class="line_title">
     <br>
-    <form action="{{ url_for('creategame') }}" name="creating" method="post">
-            <button class="btn btn-primary" type="submit">Create Game</button>
-    </form>
-    <form action="{{ url_for('joingame') }}" name="joining" method="get">
-        <button class="btn btn-primary" type="submit">Join Game</button>
-    </form>
+    <div class='row'>
+        <div class='col-sm'>
+            <form action="{{ url_for('creategame') }}" name="creating" method="post">
+                <button class="btn btn-primary pers" type="submit">Create Game</button>
+            </form>
+        </div>
+
+        <div class='col-sm'>
+            <form action="{{ url_for('joingame') }}" name="joining" method="get">
+                <button class="btn btn-primary pers" type="submit">Join Game</button>
+            </form>
+        </div>
+    </div>
     <br>
 
     <h3><strong>Match History</strong></h3>
