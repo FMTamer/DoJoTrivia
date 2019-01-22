@@ -14,7 +14,7 @@
     <br>
     <br>
     <br>
-    <table class='w-100'>
+    <table class='w-100' id='kech'>
         <tr>
             <td><button class="btn btn-default" onclick='kech()'>A</button></td>
             <td><button class="btn btn-default" onclick='kech()'>B</button></td>
@@ -25,11 +25,12 @@
         </tr>
     </table>
 
-    <p id="demo" style='text-align: center; font-size: 100pt'></p>
+    <h1><strong id="demo" style='text-align: center; font-size: 100pt'></strong></h1>
 
     <script>
         function kech() {
-             document.getElementById("demo").innerHTML = "Skip die kechs";
+             document.getElementById("demo").innerHTML = "Waiting for players";
+             document.getElementById("kech").innerHTML = ' ';
         }
     </script>
 {% endblock %}
