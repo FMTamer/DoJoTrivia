@@ -120,21 +120,16 @@ def creategame():
     if request.method == "GET":
         return render_template("creategame.html")
     else:
-        get_userID = db.execute("SELECT user_ID FROM users")
-        create_room = db.execute("SELECT game_room FROM game")
-
-        room_ID = random.randint(1,5000)
-        if room_ID not in create_room:
-            while room_ID in create_room:
-                room_ID = random.randint(1,5000)
-        db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID', 'NULL', ':room_ID', 'NULL', 'NULL', 'NULL', 'NULL', '0')",
-            get_userID = get_userID[0]["user_ID"], room_ID = room_ID)
+        generate()
         return redirect(url_for("answer"))
 
-@app.route("/joingame")
+@app.route("/joingame",  methods=["GET", "POST"])
 @login_required
 def joingame():
-    return render_template("joining.html")
+    if request.method == "GET":
+        return render_template("joining.html")
+    else:
+        return render_template("joining.html")
 
 @app.route("/makeq")
 @login_required
@@ -150,5 +145,3 @@ def results():
 @login_required
 def answer():
     return render_template("answer.html")
-
-### end of application.py

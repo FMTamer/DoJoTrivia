@@ -13,7 +13,10 @@
     <br>
     <form action="{{ url_for('creategame') }}" name="creating" method="post">
         <div class="form-group">
-            <button class="btn btn-info" type="submit">Create game</button>
+            <button class="btn btn-primary" type="submit">Create Game</button>
+        </div>
+        <div class="form-group">
+            <button formaction="/joingame" class="btn btn-primary" type="submit">Join Game</button>
         </div>
     </form>
     <br>

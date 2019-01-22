@@ -36,3 +36,16 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def generate():
+    room_ID = random.randint(1000,9999)
+    get_userID = db.execute("SELECT user_ID FROM users")
+    get_room = db.execute("SELECT game_room FROM game")
+    if room_ID not in get_room:
+        while room_ID in get_room:
+            room_ID = random.randint(1000,9999)
+    db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID', 'NULL', ':room_ID', 'NULL', 'NULL', 'NULL', 'NULL', '0')",
+        get_userID = get_userID[0]["user_ID"], room_ID = room_ID)
+
+
+
