@@ -154,13 +154,13 @@ def joingame():
     else:
         given_room = int(request.form.get("room_num"))
         rooms = check_room()
+        print(rooms)
         if not any(d['game_room'] == given_room for d in rooms):
-            return apology("This room number does not exist!")
-        else:
+            db.execute("UPDATE game SET (player_ID2 = get_userID2) WHERE game_room = given_room VALUES(':get_userID2')",
+                get_userID2 = get_userID() )
             return redirect(url_for("answer"))
-        get_userID()
-
-
+        else:
+            return apology("This room number does not exist!")
 
 @app.route("/makeq")
 @login_required
