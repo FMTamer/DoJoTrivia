@@ -4,6 +4,8 @@ from flask_session import Session
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
 import random
+import smtplib
+import os
 from helpers import *
 
 app = Flask(__name__)
@@ -53,6 +55,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # forget any user_id
+    session.clear()
+
     if request.method == "POST":
         # Checks if the forms are filled out.
         if not request.form.get("username") or not request.form.get("password"):
@@ -86,6 +91,17 @@ def logout():
 def contact():
     if request.method == "GET":
         return render_template("contact.html")
+    else:
+        if not request.form.get("username") or not request.form.get("emailaddress") or not request.form.get("contact_message") or not request.form.get("FormSelectReason"):
+            return apology("Make sure to fill in all fields!")
+        else:
+            return apology("Thank you for your feedback!")
+            message = "Thank you for your feedback, it will be taken into consideration!"
+            server= smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login("dojopython.webik@gmail.com", os.getenv("webik2019_"))
+            server.sendmail("dojopython.webik@gmail.com", "dojotrivia@gmail.com", message)
+
 
 @app.route("/about-us")
 def aboutus():
@@ -107,21 +123,20 @@ def creategame():
     if request.method == "GET":
         return render_template("creategame.html")
     else:
-        get_userID = db.execute("SELECT user_ID FROM users")
-        create_room = db.execute("SELECT game_room FROM game")
-
-        room_ID = random.randint(1,5000)
-        if room_ID not in create_room:
-            while room_ID in create_room:
-                room_ID = random.randint(1,5000)
-        db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID', 'NULL', ':room_ID', 'NULL', 'NULL', 'NULL', 'NULL', '0')",
-            get_userID = get_userID[0]["user_ID"], room_ID = room_ID)
+        generate()
         return redirect(url_for("answer"))
 
-@app.route("/joingame")
+@app.route("/joingame",  methods=["GET", "POST"])
 @login_required
 def joingame():
-    return render_template("joining.html")
+    if request.method == "POST":
+        return render_template("joining.html")
+    else:
+        if request.form.get("room_num") not in check_room():
+            return apology("This room number does not exist!")
+        else:
+            return render_template("personal-page.html")
+        get_userID()
 
 @app.route("/makeq")
 @login_required
@@ -137,5 +152,3 @@ def results():
 @login_required
 def answer():
     return render_template("answer.html")
-
-### end of application.py

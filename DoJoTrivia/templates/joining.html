@@ -14,12 +14,13 @@
     <br>
     <form action="{{ url_for('joingame') }}" method="post">
         <fieldset>
+            <p>Enter a 4-digit code you received from your opponent.</p>
             <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control" name="roomnum" placeholder="Roomnumber" type="text"/>
+                <input autocomplete="off" autofocus class="form-control" name="room_num" placeholder="Roomnumber" type="text"/>
             </div>
             <br>
             <div class="form-group">
-                <button class="btn btn-default" type="submit">Join</button>
+                <button class="btn btn-primary" type="submit">Join</button>
             </div>
         </fieldset>
     </form>

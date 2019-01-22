@@ -73,13 +73,16 @@
                           <div class="form-group margtop" style='margin-bottom: 0px;'>
                               <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text" style='margin-bottom: 1rem;'/>
                               <input autocomplete="off" class="form-control" name="password" placeholder="Password" type="password" style='margin-bottom: 1rem;'/>
-                              <button class="btn btn-default" type="submit">Log In</button>
+                              <button class="btn btn-info" type="submit">Log In</button><br>
+                              <input type="checkbox" name="session_login" value="keep_logged_in" checked="checked" />
+                              <label class="form-check-label" for="keep_logged_in">Stay signed in</label>
+
                           </div>
                   </fieldset>
                 </form>
 
               {% else %}
-              <p class='username'>{{ session.username }}</p>
+              <p class='username'>Logged in as {{ session.username }}</p>
               {% endif %}
 
 
