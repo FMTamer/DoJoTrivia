@@ -6,6 +6,7 @@ from tempfile import mkdtemp
 import random
 import smtplib
 import os
+import ssl
 from helpers import *
 
 app = Flask(__name__)
@@ -95,15 +96,26 @@ def contact():
     if request.method == "GET":
         return render_template("contact.html")
     else:
-        if not request.form.get("username") or not request.form.get("emailaddress") or not request.form.get("contact_message") or not request.form.get("FormSelectReason"):
+        if not request.form.get("username") or not request.form.get("emailaddress"):
             return apology("Make sure to fill in all fields!")
         else:
-            return apology("Thank you for your feedback!")
-            message = "Thank you for your feedback, it will be taken into consideration!"
-            server= smtplib.SMTP("smtp.gmail.com", 587)
-            server.starttls()
-            server.login("dojopython.webik@gmail.com", os.getenv("webik2019_"))
-            server.sendmail("dojopython.webik@gmail.com", "dojotrivia@gmail.com", message)
+            port = 587
+            smtp_server = "smtp.gmail.com"
+            sender_email = "dojotrivia@gmail.com"
+            receiver_email = request.form.get("emailaddress")
+            password = "webik2019_"
+            message = """\
+            Subject: Thanks for the feedback!
+
+    Thank you for your feedback, it will be taken into consideration!"""
+
+            context = ssl.create_default_context()
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, message)
+            return apology("Thanks for the feedback!")
+
 
 
 @app.route("/about-us")
