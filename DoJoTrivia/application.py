@@ -153,22 +153,11 @@ def joingame():
         return render_template("joining.html")
     else:
         given_room = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))]
-        kk =  '''UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room '''
         if given_room:
-            db.execute(kk, user_ID2 = get_userID(), room = given_room)
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = given_room)
             return render_template('answer.html', test = given_room)
         else:
-            return apology("This room numver does not exist")
-
-        # given_room = int(request.form.get("room_num"))
-        # rooms = check_room()
-        # print(rooms)
-        # if not any(d['game_room'] == given_room for d in rooms):
-        #     db.execute("UPDATE game SET (player_ID2 = get_userID2) WHERE game_room = given_room VALUES(':get_userID2')",
-        #         get_userID2 = get_userID() )
-        #     return redirect(url_for("answer"))
-        # else:
-        #     return apology("This room number does not exist!")
+            return apology("This room number does not exist")
 
 @app.route("/makeq")
 @login_required
