@@ -12,12 +12,10 @@
     <hr class="line_title">
     <br>
     <form action="{{ url_for('creategame') }}" name="creating" method="post">
-        <div class="form-group">
             <button class="btn btn-primary" type="submit">Create Game</button>
-        </div>
-        <div class="form-group">
-            <button formaction="/joingame" class="btn btn-primary" type="submit">Join Game</button>
-        </div>
+    </form>
+    <form action="{{ url_for('joingame') }}" name="joining" method="get">
+        <button class="btn btn-primary" type="submit">Join Game</button>
     </form>
     <br>
 
