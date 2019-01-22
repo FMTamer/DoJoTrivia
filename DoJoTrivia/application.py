@@ -135,12 +135,15 @@ def joingame():
     if request.method == "GET":
         return render_template("joining.html")
     else:
-        given_room = request.form.get("room_num")
-        if given_room in check_room():
-            return redirect(url_for("answer"))
-        else:
+        given_room = int(request.form.get("room_num"))
+        rooms = check_room()
+        if not any(d['game_room'] == given_room for d in rooms):
             return apology("This room number does not exist!")
+        else:
+            return redirect(url_for("answer"))
         get_userID()
+
+
 
 @app.route("/makeq")
 @login_required
