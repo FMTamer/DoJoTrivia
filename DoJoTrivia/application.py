@@ -149,8 +149,12 @@ The DoJoTrivia Team"""
 
 @app.route("/about-us")
 def aboutus():
+    # question, correct answer, incorrect-answers 0-3
     test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
-    return render_template("about-us.html", test = test)
+    question = test['question']
+    answer = test['correct_answer']
+    wrong = test['incorrect_answers']
+    return render_template("about-us.html", test = test, question = question, answer = answer, wrong1 = wrong[0], wrong2 = wrong[1], wrong3 = wrong[2])
 
 @app.route("/personal")
 @login_required
