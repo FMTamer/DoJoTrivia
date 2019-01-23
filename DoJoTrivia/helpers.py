@@ -6,6 +6,8 @@ from flask import redirect, render_template, request, session
 from functools import wraps
 import random
 
+from pytrivia import *
+
 db = SQL("sqlite:///dojo.db")
 
 
@@ -50,6 +52,7 @@ def generate():
             room_ID = random.randint(1000,9999)
     db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID1', 'NULL', ':room_ID', 'NULL', 'NULL', 'NULL', 'NULL', '0')",
         get_userID1 = get_userID(), room_ID = room_ID)
+    return room_ID
 
 
 

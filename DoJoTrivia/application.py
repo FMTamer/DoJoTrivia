@@ -9,6 +9,9 @@ import os
 import ssl
 from helpers import *
 
+import requests
+
+
 app = Flask(__name__)
 db = SQL("sqlite:///dojo.db")
 
@@ -146,12 +149,13 @@ The DoJoTrivia Team"""
 
 @app.route("/about-us")
 def aboutus():
-    return render_template("about-us.html")
+    test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+    return render_template("about-us.html", test = test)
 
 @app.route("/personal")
 @login_required
 def personal():
-    return render_template("personal-page.html", username = session['username'], test = session)
+    return render_template("personal-page.html", username = session['username'])
 
 @app.route("/createquiz")
 @login_required
@@ -164,6 +168,11 @@ def creategame():
     if request.method == "GET":
         return render_template("creategame.html")
     else:
+        # Create quiz
+        questions = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
+        question = questions[0]
+
+        # Generate room with unique ID
         generate()
         return redirect(url_for("answer"))
 
@@ -173,10 +182,10 @@ def joingame():
     if request.method == "GET":
         return render_template("joining.html")
     else:
-        given_room = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))]
+        given_room = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))][0]
         if given_room:
             db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = given_room)
-            return render_template('answer.html', test = given_room)
+            return render_template('answer.html', room = given_room)
         else:
             return apology("This room number does not exist")
 
