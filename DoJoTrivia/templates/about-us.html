@@ -8,6 +8,7 @@
     <br>
     <head>
         <h1><strong>About Us</strong></h1>
+        <button class="btn btn-primary h2" onclick='kech()'>rip</button>
     </head>
     <hr class="line_title">
     <br>
@@ -16,22 +17,31 @@
     <br/>
     <br/>
     <br/>
-    <strong class='h1'>
+    <strong class='h1' id="answer">
         <div class='row'>
             <div class='col-sm'>
-                > {{ answer }}
+                {{ answer0 }}
                 <br>
                 <br>
-                {{ wrong2 }}
+                {{ answer1 }}
             </div>
             <div class='col-sm'>
-                {{ wrong1 }}
+                {{ answer2 }}
                 <br>
                 <br>
-                {{ wrong3 }}
+                {{ answer3 }}
             </div>
         </div>
-
-
     </strong>
+    <strong id='kk'></strong>
+        {{ coranswer }}
+    <script>
+
+        function kech() {
+            var cancer = '{{ test }}'
+            document.getElementById("answer").innerHTML = cancer;
+            // document.getElementById('kk').innerHTML= cancer;
+         }
+    </script>
+
 {% endblock %}

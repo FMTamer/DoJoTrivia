@@ -54,5 +54,9 @@ def generate():
         get_userID1 = get_userID(), room_ID = room_ID)
     return room_ID
 
+def insquote(string):
+    return string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å')
+
+
 
 

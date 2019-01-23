@@ -151,10 +151,32 @@ The DoJoTrivia Team"""
 def aboutus():
     # question, correct answer, incorrect-answers 0-3
     test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
-    question = test['question']
-    answer = test['correct_answer']
+    question = insquote(test['question'])
+    coranswer = insquote(test['correct_answer'])
     wrong = test['incorrect_answers']
-    return render_template("about-us.html", test = test, question = question, answer = answer, wrong1 = wrong[0], wrong2 = wrong[1], wrong3 = wrong[2])
+
+
+    # creating answer list
+    tempanswers = wrong
+    tempanswers.append(coranswer)
+    rempos = list(range(0, 4))
+    answers = {}
+    while rempos:
+        ansnum = ''
+        x = random.choice(rempos)
+        if x == 0:
+            ansnum = 'A. '
+        elif x == 1:
+            ansnum = 'B. '
+        elif x == 2:
+            ansnum = 'C. '
+        else:
+            ansnum = 'D. '
+        answers[x] = ansnum+tempanswers[x]
+        rempos.remove(x)
+
+    return render_template("about-us.html", test = test, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
+    coranswer = coranswer)
 
 @app.route("/personal")
 @login_required
