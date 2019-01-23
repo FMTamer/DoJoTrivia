@@ -178,6 +178,7 @@ def aboutus():
     return render_template("about-us.html", test = test, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
     coranswer = coranswer)
 
+
 @app.route("/personal")
 @login_required
 def personal():
@@ -198,7 +199,8 @@ def creategame():
         #questions = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
         #question = questions[0]
         # Generate room with unique ID and Inserts it into DataBase of website.
-        rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        rows = ''
         if len(rows) == 0:
             generate()
             return redirect(url_for("answer"))
@@ -232,7 +234,35 @@ def makeq():
 def results():
     return render_template("results.html")
 
-@app.route("/answer")
+@app.route("/answer", methods=['GET', 'POST'])
 @login_required
 def answer():
-    return render_template("answer.html")
+    # question, correct answer, incorrect-answers 0-3
+    test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+    question = insquote(test['question'])
+    coranswer = insquote(test['correct_answer'])
+    wrong = test['incorrect_answers']
+
+
+    # creating answer list
+    tempanswers = wrong
+    tempanswers.append(coranswer)
+    rempos = list(range(0, 4))
+    answers = {}
+    while rempos:
+        ansnum = ''
+        x = random.choice(rempos)
+        if x == 0:
+            ansnum = 'A. '
+        elif x == 1:
+            ansnum = 'B. '
+        elif x == 2:
+            ansnum = 'C. '
+        else:
+            ansnum = 'D. '
+        answers[x] = ansnum+tempanswers[x]
+        rempos.remove(x)
+
+    if request.method == 'GET':
+        return render_template("answer.html", test = test, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
+        coranswer = coranswer)

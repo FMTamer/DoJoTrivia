@@ -10,8 +10,7 @@
         <h1><strong>
             Room: {{ room }}
             <br/>
-            Question {{ question }}
-            Please choose your answer:
+            {{ question }}
             </strong></h1>
     </head>
     <hr class="line_title">
@@ -21,15 +20,15 @@
     <br>
     <table class='w-100' id='kech'>
         <tr>
-            <td><button class="btn btn-primary h2" onclick='kech()'>A</button></td>
-            <td><button class="btn btn-primary h2" onclick='kech()'>B</button></td>
+            <td><button class="btn btn-primary h2" onclick='kech()'>{{ answer0 }}</button></td>
+            <td><button class="btn btn-primary h2" onclick='kech()'>{{ answer2 }}</button></button></td>
         </tr>
         <tr>
-            <td><button class="btn btn-primary h2" onclick='kech()'>C</button></td>
-            <td><button class="btn btn-primary h2" onclick="kech()">D</button></td>
+            <td><button class="btn btn-primary h2" onclick='kech()'>{{ answer1 }}</button></td>
+            <td><button class="btn btn-primary h2" onclick="kech()">{{ answer3 }}</button></td>
         </tr>
     </table>
-
+    <p>{{ coranswer }}</p>
     <h1><strong id="demo" class='text-center'></strong></h1>
 
     <script>
