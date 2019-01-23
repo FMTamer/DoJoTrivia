@@ -182,7 +182,7 @@ def creategame():
             return redirect(url_for("answer"))
         else:
             return apology("You are already in a game. Go continue with that bitch or leave the game.")
-
+##
 @app.route("/joingame",  methods=["GET", "POST"])
 @login_required
 def joingame():
@@ -199,7 +199,6 @@ def joingame():
             return render_template('answer.html', room = given_room)
         else:
             return apology("This room number does not exist")
-
 
 @app.route("/makeq")
 @login_required
