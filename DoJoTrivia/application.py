@@ -195,18 +195,25 @@ def creategame():
         return render_template("creategame.html")
     else:
         # Create quiz
-        questions = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
-        question = questions[0]
-
-        # Generate room with unique ID
-        generate()
-        return redirect(url_for("answer"))
-
+        #questions = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
+        #question = questions[0]
+        # Generate room with unique ID and Inserts it into DataBase of website.
+        rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        if len(rows) == 0:
+            generate()
+            return redirect(url_for("answer"))
+        else:
+            return apology("You are already in a game. Go continue with that bitch or leave the game.")
+##
 @app.route("/joingame",  methods=["GET", "POST"])
 @login_required
 def joingame():
     if request.method == "GET":
-        return render_template("joining.html")
+        rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        if len(rows) == 0:
+            return render_template("joining.html")
+        else:
+            return apology("You are already in a game. Go continue with that bitch or leave the game.")
     else:
         given_room = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))][0]
         if given_room:
@@ -214,7 +221,6 @@ def joingame():
             return render_template('answer.html', room = given_room)
         else:
             return apology("This room number does not exist")
-
 
 @app.route("/makeq")
 @login_required
