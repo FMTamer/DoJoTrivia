@@ -250,19 +250,11 @@ def answer():
     rempos = list(range(0, 4))
     answers = {}
     while rempos:
-        ansnum = ''
         x = random.choice(rempos)
-        if x == 0:
-            ansnum = 'A. '
-        elif x == 1:
-            ansnum = 'B. '
-        elif x == 2:
-            ansnum = 'C. '
-        else:
-            ansnum = 'D. '
-        answers[x] = ansnum+tempanswers[x]
+        answers[x] = random.choice(tempanswers)
         rempos.remove(x)
+        tempanswers.remove(answers[x])
 
     if request.method == 'GET':
-        return render_template("answer.html", test = test, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
+        return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
         coranswer = coranswer)

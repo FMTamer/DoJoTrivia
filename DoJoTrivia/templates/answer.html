@@ -19,19 +19,21 @@
     <br>
     <br>
     <table class='w-100' id='kech'>
-        <tr>
-            <td><button class="btn btn-primary answer" id='answer0' onclick='kech()'>{{ answer0 }}</button></td>
-            <td><button class="btn btn-primary answer" id='answer2' onclick='kech()'>{{ answer2 }}</button></button></td>
+        <tr style='width: auto'>
+            <td><button class="btn btn-primary answer w-100" onclick='kech()'>A. <id ='answer0'>{{ answer0 }}</id></button></td>
+            <td><button class="btn btn-primary answer w-100" onclick='kech()'>C. <id='answer2'>{{ answer2 }}</id></button></button></td>
         </tr>
         <tr>
-            <td><button class="btn btn-primary answer" id='answer1' onclick='kech()'>{{ answer1 }}</button></td>
-            <td><button class="btn btn-primary answer" id='answer3' onclick="kech()">{{ answer3 }}</button></td>
+            <td><button class="btn btn-primary answer w-100" onclick='kech()'>B. <id='answer1'>{{ answer1 }}</id></button></td>
+            <td><button class="btn btn-primary answer w-100" onclick="kech()">D. <id='answer3'>{{ answer3 }}</id></button></td>
         </tr>
     </table>
 
-    <h1><strong id="demo" class='text-center'></strong></h1>
     <strong class='h1' id='feedback'></strong>
-    <p class='text-center'>{{ coranswer }}</p>
+    <p class='text-center'>{{ coranswer }}
+    <br>
+    {{ test  }}
+    </p>
 
     <script>
         // function kech() {
@@ -40,18 +42,19 @@
         // }
         $( ".answer" ).click(function() {
             // remember selected answer
-            var qq = $(this).text()
-            var ss = qq.substring(2, qq.length);
-            document.getElementById("demo").innerHTML = "You have selected: "+ss;
+            var qq = $(this).text();
 
 
-            var bitch =  '{{ coranswer }}';
-            if (bitch===ss){
-                document.getElementById("feedback").innerHTML = 'goed geantwoord';
+            // compares given answers with correct answer
+            var given_answer =  '{{ coranswer }}';
+            if (given_answer===qq){
+                document.getElementById("feedback").innerHTML = 'Correct!';
             }
-            else{
-               document.getElementById("feedback").innerHTML = 'ben je zo tantoe slecht in coderen'
+            else if (given_answer != qq){
+                 document.getElementById("feedback").innerHTML = 'Wrong! The correct answer is:<br/>{{ coranswer }}';
             }
+
+            // clears other text on
             document.getElementById("kech").innerHTML = '';
         });
     </script>
