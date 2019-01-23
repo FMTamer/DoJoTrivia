@@ -112,6 +112,10 @@ p{text-align:left;
 }
 
 /*Answers*/
+.answer{
+  font-size: 2rem;
+
+}
 
 /*Buttons*/
 .pers{
