@@ -114,11 +114,20 @@ p{text-align:left;
 /*Answers*/
 .answer{
   font-size: 2rem;
-  text-align: center;
+  height: 100%;
 
 }
 
 /*Buttons*/
 .pers{
   margin-bottom: 1rem;
+}
+
+/*Headers*/
+.roomtag{
+  font-size:2rem;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: left;
+  color: #222222;
 }
