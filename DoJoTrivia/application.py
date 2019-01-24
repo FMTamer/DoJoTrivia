@@ -178,7 +178,18 @@ def creategame():
             # Generates room code.
             room_ID = generate()
             # question, correct answer, incorrect-answers 0-3
-            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
+            api_call = [(insquote(x['question']), [insquote(a) for a in x['incorrect_answers']], insquote(x['correct_answer'])) for x in requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']]
+            poep = {}
+            for i in range(len(api_call)):
+                poep[i] = api_call[i]
+
+            questdict = {x: api_call[x][0] for x in range(len(api_call))}
+            wrong_answers = {x: api_call[x][1] for x in range(len(api_call))}
+            coranswers = {x: api_call[x][2] for x in range(len(api_call))}
+
+
+
+
             db.execute("UPDATE questions SET game_room = :room_ID", room_ID = room_ID)
             test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
             question = insquote(test['question'])
@@ -196,7 +207,7 @@ def creategame():
                 answers[x] = random.choice(tempanswers)
                 rempos.remove(x)
                 tempanswers.remove(answers[x])
-            return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
+            return render_template("answer.html", questdict=questdict, wrong_answers = wrong_answers, coranswers = coranswers, test = poep, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
         else:
             return apology("You are already in a game. Go continue with that bitch or leave the game.")
 
