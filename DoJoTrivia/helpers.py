@@ -5,7 +5,7 @@ import urllib.request
 from flask import redirect, render_template, request, session
 from functools import wraps
 import random
-
+import requests
 from pytrivia import *
 
 db = SQL("sqlite:///dojo.db")
@@ -57,6 +57,3 @@ def generate():
 def insquote(string):
     string = string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å').replace('&rsquo;', "'").replace('&eacute', "é").replace('&LDQUO;', "'")
     return string.replace('&RDQUO;', "'")
-
-
-

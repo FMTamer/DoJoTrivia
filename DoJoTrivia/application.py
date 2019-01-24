@@ -8,7 +8,7 @@ import smtplib
 import os
 import ssl
 from helpers import *
-
+from flask import jsonify
 import requests
 
 
@@ -153,7 +153,7 @@ def aboutus():
     test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
     question = insquote(test['question'])
     coranswer = insquote(test['correct_answer'])
-    wrong = [insquote(x) for x in test['incorrect_answers']]
+    wrong = test['incorrect_answers']
 
 
     # creating answer list
@@ -162,11 +162,18 @@ def aboutus():
     rempos = list(range(0, 4))
     answers = {}
     while rempos:
+        ansnum = ''
         x = random.choice(rempos)
-        y = random.choice(tempanswers)
-        answers[x] = y
+        if x == 0:
+            ansnum = 'A. '
+        elif x == 1:
+            ansnum = 'B. '
+        elif x == 2:
+            ansnum = 'C. '
+        else:
+            ansnum = 'D. '
+        answers[x] = ansnum+tempanswers[x]
         rempos.remove(x)
-        tempanswers.remove(y)
 
     return render_template("about-us.html", test = test, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
     coranswer = coranswer)
@@ -195,10 +202,28 @@ def creategame():
         # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
         rows = ''
         if len(rows) == 0:
+            # Generates room code.
             generate()
-            return redirect(url_for("answer"))
+            # question, correct answer, incorrect-answers 0-3
+            test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+            question = insquote(test['question'])
+            coranswer = insquote(test['correct_answer'])
+            wrong = test['incorrect_answers']
+
+            # creating answer list
+            tempanswers = wrong
+            tempanswers.append(coranswer)
+            rempos = list(range(0, 4))
+            answers = {}
+            while rempos:
+                x = random.choice(rempos)
+                answers[x] = random.choice(tempanswers)
+                rempos.remove(x)
+                tempanswers.remove(answers[x])
+            return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
         else:
             return apology("You are already in a game. Go continue with that bitch or leave the game.")
+
 ##
 @app.route("/joingame",  methods=["GET", "POST"])
 @login_required
@@ -230,24 +255,18 @@ def results():
 @app.route("/answer", methods=['GET', 'POST'])
 @login_required
 def answer():
-    # question, correct answer, incorrect-answers 0-3
-    test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
-    question = insquote(test['question'])
-    coranswer = insquote(test['correct_answer'])
-    wrong = [insquote(x) for x in test['incorrect_answers']]
-
-
-    # creating answer list
-    tempanswers = wrong
-    tempanswers.append(coranswer)
-    rempos = list(range(0, 4))
-    answers = {}
-    while rempos:
-        x = random.choice(rempos)
-        answers[x] = random.choice(tempanswers)
-        rempos.remove(x)
-        tempanswers.remove(answers[x])
-
     if request.method == 'GET':
         return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
         coranswer = coranswer)
+
+
+@app.route('/correct_answer')
+def background_process():
+	try:
+		score = request.args.get('scores', 0, type=str)
+		if score == 1:
+			return jsonify(result='You are wise')
+		else:
+			return jsonify(result='Try again.')
+	except Exception as e:
+		return str(e)
