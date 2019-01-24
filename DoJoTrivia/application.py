@@ -10,6 +10,8 @@ import ssl
 from helpers import *
 from flask import jsonify
 import requests
+import json
+
 
 
 app = Flask(__name__)
@@ -178,13 +180,33 @@ def creategame():
             # Generates room code.
             room_ID = generate()
             # question, correct answer, incorrect-answers 0-3
+            # api_call
             api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
-            db.execute("UPDATE questions SET game_room = :room_ID JSON = :api_call", room_ID = room_ID, api_call = api_call)
-            #test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
-            #question = insquote(test['question'])
-            #coranswer = insquote(test['correct_answer'])
-            #wrong = test['incorrect_answers']
+            dictcall = [(insquote(x['question']), [str(insquote(a)) for a in x['incorrect_answers']], insquote(x['correct_answer'])) for x in api_call]
+            # poep = {}
+            # for i in range(len(dictcall)):
+            #     poep[i] = dictcall[i]
 
+            questdict = {x: dictcall[x][0] for x in range(len(dictcall))}
+            wrong_answers = {x: dictcall[x][1] for x in range(len(dictcall))}
+            coranswers = {x: dictcall[x][2] for x in range(len(dictcall))}
+
+
+            # make json file
+            jsonfile = {}
+            for i in range(len(dictcall)) :
+                jsonfile['q'+str(i)] = [dictcall[i][0], dictcall[i][1], dictcall[i][2]]
+            jsonfile = json.dumps(jsonfile)
+
+
+            # update database
+            db.execute("INSERT INTO questions (game_room, JSON) VALUES(:room_ID, :api_call)", room_ID = room_ID, api_call = str(dictcall) )
+
+            # temp question and answers
+            test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+            question = insquote(test['question'])
+            coranswer = insquote(test['correct_answer'])
+            wrong = test['incorrect_answers']
 
             # creating answer list
             tempanswers = wrong
@@ -196,7 +218,7 @@ def creategame():
                 answers[x] = random.choice(tempanswers)
                 rempos.remove(x)
                 tempanswers.remove(answers[x])
-            return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
+            return render_template("answer.html", jsonfile = jsonfile, questdict=questdict, wrong_answers = wrong_answers, coranswers = coranswers, test = dictcall, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
         else:
             return apology("You are already in a game. Go continue with that bitch or leave the game.")
 
