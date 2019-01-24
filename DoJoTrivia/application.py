@@ -178,24 +178,27 @@ def creategame():
             # Generates room code.
             room_ID = generate()
             # question, correct answer, incorrect-answers 0-3
-            api_call = [(insquote(x['question']), [insquote(a) for a in x['incorrect_answers']], insquote(x['correct_answer'])) for x in requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']]
+
+            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
+            dictcall = [(insquote(x['question']), [insquote(a) for a in x['incorrect_answers']], insquote(x['correct_answer'])) for x in api_call]
             poep = {}
-            for i in range(len(api_call)):
-                poep[i] = api_call[i]
+            for i in range(len(dictcall)):
+                poep[i] = dictcall[i]
 
-            questdict = {x: api_call[x][0] for x in range(len(api_call))}
-            wrong_answers = {x: api_call[x][1] for x in range(len(api_call))}
-            coranswers = {x: api_call[x][2] for x in range(len(api_call))}
-
-
+            questdict = {x: dictcall[x][0] for x in range(len(dictcall))}
+            wrong_answers = {x: dictcall[x][1] for x in range(len(dictcall))}
+            coranswers = {x: dictcall[x][2] for x in range(len(dictcall))}
 
 
-            db.execute("UPDATE questions SET game_room = :room_ID", room_ID = room_ID)
+
+            # update database
+            db.execute("INSERT INTO questions (game_room, JSON) VALUES(:room_ID, :api_call)", room_ID = room_ID, api_call = dictcall )
+
+            # temp question and answers
             test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
             question = insquote(test['question'])
             coranswer = insquote(test['correct_answer'])
             wrong = test['incorrect_answers']
-
 
             # creating answer list
             tempanswers = wrong
