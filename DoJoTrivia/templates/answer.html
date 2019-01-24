@@ -58,19 +58,37 @@
         var quizlist = JSON.parse(jsonfile);
 
         document.getElementById('question').innerHTML = quizlist.q0[0];
-        // Scramvble answers
-        var answerArray = ['answer0', 'answer1', 'answer2', 'answer3'];
 
-        document.getElementById('answer0').innerHTML = quizlist.q0[2];
-        document.getElementById('answer1').innerHTML = quizlist.q0[1][0];
-        document.getElementById('answer2').innerHTML = quizlist.q0[1][1];
-        document.getElementById('answer3').innerHTML = quizlist.q0[1][2];
-        document.getElementById('feedback').innerHTML = answerArray;
+        // Scramble answers
+        // Init arrays for scrambling
+        var idArray = ['answer0', 'answer1', 'answer2', 'answer3'];
+        var answerArray = [quizlist.q0[2], quizlist.q0[1][0], quizlist.q0[1][1], quizlist.q0[1][2]];
+        // Choose random position for answer and remove position from the possible positions
+        while (idArray.length > 0) {
+            var ran = Math.floor(Math.random() * idArray.length);
+             var rans = Math.floor(Math.random() * answerArray.length);
+            document.getElementById(idArray[ran]).innerHTML = answerArray[rans];
+            idArray.splice(ran, 1);
+            answerArray.splice(rans, 1);
+        };
+
+
+
 
         $( ".answer" ).click(function() {
-
-            document.getElementById('kech').innerHTML = quizlist.q0+"<br/>"+quizlist.q1;
-        });
+            // remember selected answer
+            var qq = $(this).text();
+            // compares given answers with correct answer
+            var given_answer =  quizlist.q0[2];
+            if (given_answer===qq){
+                document.getElementById("feedback").innerHTML = 'Correct!';
+            }
+            else if (given_answer != qq){
+                 document.getElementById("feedback").innerHTML = 'Wrong! The correct answer is:<br/>'+given_answer;
+            }
+            // clears other text on
+            document.getElementById("kech").innerHTML = '';
+        })
 </script>
 {% endblock %}
 
