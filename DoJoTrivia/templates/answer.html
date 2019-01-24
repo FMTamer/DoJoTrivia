@@ -40,27 +40,30 @@
 
 
 
-    <script>
-        // function kech() {
-            //  document.getElementById("demo").innerHTML = "Waiting for players";
-            //  document.getElementById("kech").innerHTML = ' ';
-        // }
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+
         $( ".answer" ).click(function() {
             // remember selected answer
             var qq = $(this).text();
-
-
             // compares given answers with correct answer
             var given_answer =  '{{ coranswer }}';
             if (given_answer===qq){
-                document.getElementById("feedback").innerHTML = 'Correct!';
+                var score = 1;
+    		    $.getJSON('/correct_answer', {
+    			    score: $('1').val(),
+    		    }, function(data) {
+    				$("#feedback").text(data.result);
+    				});
+    				return document.getElementById("feedback").innerHTML = 'You are done!!';
+
             }
             else if (given_answer != qq){
-                 document.getElementById("feedback").innerHTML = 'Wrong! The correct answer is:<br/>{{ coranswer }}';
+                document.getElementById("feedback").innerHTML = 'Wrong! The correct answer is:<br/>{{ coranswer }}';
             }
-
-            // clears other text on
-            document.getElementById("kech").innerHTML = '';
         });
     </script>
 {% endblock %}
+
+
