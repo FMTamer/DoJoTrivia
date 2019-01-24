@@ -131,3 +131,16 @@ p{text-align:left;
   text-align: left;
   color: #444444;
 }
+
+.bg {
+  /* The image used */
+  background-image: url("static/dojotrivia-logo.jpeg");
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

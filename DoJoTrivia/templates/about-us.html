@@ -8,40 +8,29 @@
     <br>
     <head>
         <h1><strong>About Us</strong></h1>
-        <button class="btn btn-primary h2" onclick='kech()'>rip</button>
     </head>
     <hr class="line_title">
     <br>
-    <strong class='h1'>{{ question }}</strong>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <strong class='h1' id="answer">
-        <div class='row'>
-            <div class='col-sm'>
-                {{ answer0 }}
-                <br>
-                <br>
-                {{ answer1 }}
-            </div>
-            <div class='col-sm'>
-                {{ answer2 }}
-                <br>
-                <br>
-                {{ answer3 }}
-            </div>
-        </div>
-    </strong>
-    <strong id='kk'></strong>
-        {{ coranswer }}
-    <script>
-
-        function kech() {
-            var cancer = '{{ test }}'
-            document.getElementById("answer").innerHTML = cancer;
-            // document.getElementById('kk').innerHTML= cancer;
-         }
-    </script>
+    <br>
+    <p><h5>DojoTrivia, starting out as a school project assigned to four college students, turned out to be a lot of work.
+    We had four weeks time, which we thought would be more than enough, but we guessed wrong. In those four weeks,
+    a lot of time was spent creating this very website, implementing all necessary functions. For one of the students,
+    it was his first time working with HTML (except for the other assignments in the first week). This wouldn't matter,
+    however, as it turned out to be a huge amount of work, with great difficulty. Multiple languages were combined in the
+    making of DoJoTrivia, including: Python, HTML, CSS, SQL, and eventually JavaScript. Combining all of these wasn't an
+    easy task either. Loads of time was spent Googling questions and looking at tutorials.</h5></p>
+    <br>
+    <br>
+    <p><h5>And here we are, proud to present to you: DoJoTrivia, a place where you can test your knowledge and of challenge your
+    friends! We hope you enjoy!</h5></p>
+    <br>
+    <br>
+    <h5>Sincerely,</h5>
+    <br>
+    <h5>The DoJoTrivia Team</h5>
+    <br>
+    <br>
+    <br>
+    <img src="static/logo.png">
 
 {% endblock %}
