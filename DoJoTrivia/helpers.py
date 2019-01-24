@@ -55,8 +55,8 @@ def generate():
     return room_ID
 
 def insquote(string):
-    return string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å').replace('&rsquo;', "'").replace('&eacute', "é")
-
+    string = string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å').replace('&rsquo;', "'").replace('&eacute', "é").replace('&LDQUO;', "'")
+    return string.replace('&RDQUO;', "'")
 
 
 

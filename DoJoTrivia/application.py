@@ -153,7 +153,7 @@ def aboutus():
     test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
     question = insquote(test['question'])
     coranswer = insquote(test['correct_answer'])
-    wrong = test['incorrect_answers']
+    wrong = [insquote(x) for x in test['incorrect_answers']]
 
 
     # creating answer list
@@ -162,18 +162,11 @@ def aboutus():
     rempos = list(range(0, 4))
     answers = {}
     while rempos:
-        ansnum = ''
         x = random.choice(rempos)
-        if x == 0:
-            ansnum = 'A. '
-        elif x == 1:
-            ansnum = 'B. '
-        elif x == 2:
-            ansnum = 'C. '
-        else:
-            ansnum = 'D. '
-        answers[x] = ansnum+tempanswers[x]
+        y = random.choice(tempanswers)
+        answers[x] = y
         rempos.remove(x)
+        tempanswers.remove(y)
 
     return render_template("about-us.html", test = test, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
     coranswer = coranswer)
@@ -241,7 +234,7 @@ def answer():
     test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
     question = insquote(test['question'])
     coranswer = insquote(test['correct_answer'])
-    wrong = test['incorrect_answers']
+    wrong = [insquote(x) for x in test['incorrect_answers']]
 
 
     # creating answer list
