@@ -178,10 +178,10 @@ def creategame():
             # Generates room code.
             generate()
             # question, correct answer, incorrect-answers 0-3
-            test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
-            question = insquote(test['question'])
-            coranswer = insquote(test['correct_answer'])
-            wrong = test['incorrect_answers']
+            jlist = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+            question = insquote(jlist['question'])
+            coranswer = insquote(jlist['correct_answer'])
+            wrong = jlist['incorrect_answers']
 
             # creating answer list
             tempanswers = wrong
