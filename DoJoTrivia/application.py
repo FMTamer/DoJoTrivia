@@ -148,7 +148,7 @@ The DoJoTrivia Team"""
 
 
 @app.route("/about-us")
-def aboutus():s
+def aboutus():
     return render_template("about-us.html")
 
 
