@@ -186,6 +186,7 @@ def creategame():
             coranswer = insquote(api_call['correct_answer'])
             wrong = api_call['incorrect_answers']
 
+
             # creating answer list
             tempanswers = wrong
             tempanswers.append(coranswer)
