@@ -151,7 +151,13 @@ The DoJoTrivia Team"""
 
 @app.route("/about-us", methods = ['GET', 'POST'])
 def aboutus():
+    if request.method == 'GET':
         return render_template("about-us.html")
+    else:
+        db.execute("UPDATE game SET answered = answered + 2 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] != 2:
+            wait()
+        return render_template("about-us.html", answered = session['room_ID'])
 
 
 @app.route("/personal")
@@ -180,38 +186,20 @@ def creategame():
             # Generates room code.
             room_ID = generate()
             session['room_ID'] = room_ID
-            # question, correct answer, incorrect-answers 0-3
+
             # api_call
-            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
-            dictcall = [(insquote(x['question']), [str(insquote(a)) for a in x['incorrect_answers']], insquote(x['correct_answer'])) for x in api_call]
-            # poep = {}
-            # for i in range(len(dictcall)):
-            #     poep[i] = dictcall[i]
+            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
 
-            questdict = {x: dictcall[x][0] for x in range(len(dictcall))}
-            wrong_answers = {x: dictcall[x][1] for x in range(len(dictcall))}
-            coranswers = {x: dictcall[x][2] for x in range(len(dictcall))}
+            # store useable values
+            quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
 
+            # store in database
+            db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(':room_ID', 'quest', ':wa1', ':wa2', ':wa3', ':ca')",
+            room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1])
 
-            # make json file
-            jsonfile = {}
-            for i in range(len(dictcall)) :
-                jsonfile['q'+str(i)] = [dictcall[i][0], dictcall[i][1], dictcall[i][2]]
-            jsonfile = json.dumps(jsonfile)
-
-
-            # update database
-            db.execute("INSERT INTO questions (game_room, JSON) VALUES(:room_ID, :api_call)", room_ID = room_ID, api_call = str(dictcall) )
-
-            # temp question and answers
-            test = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
-            question = insquote(test['question'])
-            coranswer = insquote(test['correct_answer'])
-            wrong = test['incorrect_answers']
-
-            # creating answer list
-            tempanswers = wrong
-            tempanswers.append(coranswer)
+            # scramble answers
+            tempanswers = quizlist[2]
+            tempanswers.append(quizlist[1])
             rempos = list(range(0, 4))
             answers = {}
             while rempos:
@@ -219,25 +207,41 @@ def creategame():
                 answers[x] = random.choice(tempanswers)
                 rempos.remove(x)
                 tempanswers.remove(answers[x])
-            return render_template("answer.html", jsonfile = jsonfile, room = session['room_ID'], wrong_answers = wrong_answers, coranswers = coranswers, test = dictcall, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
+
+            # render sites
+            return render_template("answer.html", room = session['room_ID'], test = tempanswers, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
         else:
-            return apology("You are already in a game. Go continue with that bitch or leave the game.")
+            return apology("You are already in a game. Go continue with that or leave the game.")
 
 
 @app.route("/joingame",  methods=["GET", "POST"])
 @login_required
 def joingame():
     if request.method == "GET":
-        rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        # check if player is already in game
+        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        rows = ''
         if len(rows) == 0:
             return render_template("joining.html")
         else:
-            return apology("You are already in a game. Go continue with that bitch or leave the game.")
+            return apology("You are already in a game. Go continue with that or leave the game.")
+
     else:
-        given_room = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))][0]
-        if given_room:
-            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = given_room)
-            return render_template('answer.html', room = given_room)
+        # check if room number exits and assign to session
+        session['room_ID'] = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))][0]
+        if session['room_ID']:
+            # update database
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = session['room_ID'])
+
+            # load JSON from database
+            dictcall = db.execute("SELECT JSON FROM questions WHERE game_room = :room", room = session['room_ID'])[0]['JSON']
+            jsonfile = {'q'+str(1): dictcall[0]}
+            # for i in range(len(dictcall)):
+            #     jsonfile['q'+str(i)] = [dictcall[0][0], dictcall[0][1], dictcall[0][2]]
+            # jsonfile = json.dumps(jsonfile)
+
+            # load page
+            return render_template('answer.html', room = session['room_ID'], test = dictcall, coranswers = jsonfile)
         else:
             return apology("This room number does not exist")
 
@@ -289,11 +293,11 @@ def retreat():
             score1 = 10, score2 = 0, time_stamp = time_stamp, completed = 1, room = room)
     return render_template("results.html")
 
-@app.route("/newquestion" , methods=['GET', 'POST'])
-@login_required
-def update_db():
-    x = 0
-    while x == 0:
-        pass
-        # answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] + 1
-    return render_template('answer.html')
+# @app.route("/newquestion" , methods=['GET', 'POST'])
+# @login_required
+# def update_db():
+#     x = 0
+#     while x == 0:
+#         wait()
+#         # answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] + 1
+#     return render_template('answer.html')

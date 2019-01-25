@@ -21,17 +21,17 @@
     <br>
     <br>
     <br>
-    <table class='w-100' id='kech'>
+    <table class='w-100' id='maincon'>
         <tr style='width: auto'>
-            <td><button class="btn btn-primary answer w-100" id ='answer0'></button></td>
-            <td><button class="btn btn-primary answer w-100" id='answer2'></button></button></td>
+            <td><button class="btn btn-primary answer w-100" id ='answer0'>{{ answer0 }}</button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer1'>{{ answer1 }}</button></button></td>
         </tr>
         <tr>
-            <td><button class="btn btn-primary answer w-100" id='answer1'></button></td>
-            <td><button class="btn btn-primary answer w-100" id='answer3'></button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer2'>{{ answer2 }}</button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer3'>{{ answer3 }}</button></td>
         </tr>
     </table>
-<<<<<<< HEAD
+
     <form action="{{ url_for('retreat') }}" name="retreating" method="post">
         <fieldset>
             <br>
@@ -41,30 +41,24 @@
         </fieldset>
     </form>
     <strong class='h1'><h1 id='feedback'></h1></strong>
-=======
+
 
     <div id='wronghidden' style='display: none'>
-        <form action="{{ url_for('newquestion') }}" method="post">
+        <form action="{{ url_for('aboutus') }}" method="post">
             <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>
     <div id='corhidden' style='display: none'>
-        <form action="{{ url_for('newquestion') }}" method="post">
+        <form action="{{ url_for('aboutus') }}" method="post">
             <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>
 
->>>>>>> bc39cdf1d75c8147d47dee8447d3fb949915da7b
     <p class='text-center'>{{ coranswer }}
     <br>
     {{ test  }}
     <br/>
     <br/>
-    {{ questdict }}
-    <br/>
-    {{ wrong_answers }}
-    <br/>
-    {{ coranswers }}
     <br/>
 
 
@@ -78,24 +72,24 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-        // Read JSON file
-        var jsonfile = document.getElementById("getJSON").innerHTML;
-        var quizlist = JSON.parse(jsonfile);
+        // // Read JSON file
+        // var jsonfile = document.getElementById("getJSON").innerHTML;
+        // var quizlist = JSON.parse(jsonfile);
 
-        document.getElementById('question').innerHTML = quizlist.q0[0];
+        // document.getElementById('question').innerHTML = quizlist.q0[0];
 
-        // Scramble answers
-        // Init arrays for scrambling
-        var idArray = ['answer0', 'answer1', 'answer2', 'answer3'];
-        var answerArray = [quizlist.q0[2], quizlist.q0[1][0], quizlist.q0[1][1], quizlist.q0[1][2]];
-        // Choose random position for answer and remove position from the possible positions
-        while (idArray.length > 0) {
-            var ran = Math.floor(Math.random() * idArray.length);
-             var rans = Math.floor(Math.random() * answerArray.length);
-            document.getElementById(idArray[ran]).innerHTML = answerArray[rans];
-            idArray.splice(ran, 1);
-            answerArray.splice(rans, 1);
-        };
+        // // Scramble answers
+        // // Init arrays for scrambling
+        // var idArray = ['answer0', 'answer1', 'answer2', 'answer3'];
+        // var answerArray = [quizlist.q0[2], quizlist.q0[1][0], quizlist.q0[1][1], quizlist.q0[1][2]];
+        // // Choose random position for answer and remove position from the possible positions
+        // while (idArray.length > 0) {
+        //     var ran = Math.floor(Math.random() * idArray.length);
+        //      var rans = Math.floor(Math.random() * answerArray.length);
+        //     document.getElementById(idArray[ran]).innerHTML = answerArray[rans];
+        //     idArray.splice(ran, 1);
+        //     answerArray.splice(rans, 1);
+        // };
 
 
 
@@ -104,18 +98,18 @@
             // remember selected answer
             var button_text = $(this).text();
             // compares given answers with correct answer
-            var given_answer =  quizlist.q0[2];
+            var given_answer =  "{{ coranswer }}";
             if (given_answer===button_text){
-                document.getElementById("kech").innerHTML = '<strong class="h1 waitmsg">Correct!</strong>';
+                document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Correct!</strong>';
                 document.getElementById("corhidden").style.display = "block";
             }
             else if (given_answer != button_text){
-                 document.getElementById("kech").innerHTML = '<strong class="h1 waitmsg">Wrong! The correct answer is:<br/>'+given_answer+'</strong>';
+                 document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Wrong! The correct answer is:<br/>'+given_answer+'</strong>';
                  document.getElementById("wronghidden").style.display = "block";
             }
 
             function waitmsg(){
-                document.getElementById("kech").innerHTML = 'Waiting for players';
+                document.getElementById("maincon").innerHTML = 'Waiting for players';
             };
 
         })

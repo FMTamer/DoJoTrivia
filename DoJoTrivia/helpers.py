@@ -8,6 +8,7 @@ import random
 import requests
 from pytrivia import *
 import time
+from time import sleep
 import datetime
 
 db = SQL("sqlite:///dojo.db")
@@ -63,3 +64,7 @@ def insquote(string):
 def get_timestamp():
 	ts = time.time()
 	return  str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
+
+def wait():
+    sleep(0.50)
+
