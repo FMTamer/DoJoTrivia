@@ -151,11 +151,8 @@ The DoJoTrivia Team"""
 
 @app.route("/about-us", methods = ['GET', 'POST'])
 def aboutus():
-    if request.method == 'GET':
         return render_template("about-us.html")
-    else:
-        answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-        return render_template("about-us.html", answered = answered)
+
 
 @app.route("/personal")
 @login_required
@@ -265,5 +262,10 @@ def answer():
 @app.route("/newquestion" , methods=['GET', 'POST'])
 @login_required
 def update_db():
-    answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-    return render_template("about-us.html", answered = answered)
+    x = 0
+    while x == 0:
+        pass
+        # answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] + 1
+    return render_template('answer.html')
+
+
