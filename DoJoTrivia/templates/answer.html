@@ -33,12 +33,12 @@
     </table>
 
     <div id='wronghidden' style='display: none'>
-        <form action="{{ url_for('aboutus') }}" method="post">
+        <form action="{{ url_for('correct_answer') }}" method="post">
             <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>
     <div id='corhidden' style='display: none'>
-        <form action="{{ url_for('aboutus') }}" method="post">
+        <form action="{{ url_for('correct_answer') }}" method="post">
             <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>

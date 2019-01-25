@@ -109,7 +109,9 @@ def login():
 
 @app.route("/logout", methods=["GET"])
 def logout():
-    """Log user out."""
+    """
+    Log user out.
+    """
 
     # forget any user_id
     session.clear()
@@ -157,7 +159,7 @@ def aboutus():
         db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
         while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < 2:
             wait()
-        return render_template("about-us.html", answered = session['room_ID'])
+        return render_template("results.html", answered = session['room_ID'])
 
 
 @app.route("/personal")
@@ -274,14 +276,7 @@ def answer():
 
 @app.route('/correct_answer')
 def background_process():
-	try:
-		score = request.args.get('scores', 0, type=str)
-		if score == 1:
-			return jsonify(result='You are wise')
-		else:
-			return jsonify(result='Try again.')
-	except Exception as e:
-		return str(e)
+	return render_template('index.html')
 
 @app.route("/retreat", methods=['POST'])
 @login_required
