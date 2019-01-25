@@ -7,14 +7,20 @@
 {% block main %}
     <br>
     <head>
-        <h1><strong>Welcome, {{ username }}</strong></h1>
+        <h1><strong>Welcome to your personal page, {{ username }}!</strong></h1>
     </head>
     <hr class="line_title">
     <br>
+    <h3>
+        Here you can create or join a game. Keep in mind that you can only be active in 1 game at once.
+        you can also easily check your match history to see how well you did!
+        If you scroll more down you can see the statistic of your DoJoTrivia career. Make sure to compare with your friend!
+    </h3>
     <div class='row'>
+        <br>
         <div class='col-sm'>
             <form action="{{ url_for('creategame') }}" name="creating" method="post">
-                <button class="btn btn-primary pers" type="submit">Create Game</button>
+                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Create Game</button>
             </form>
         </div>
         <div class='col-sm'>
@@ -22,7 +28,7 @@
         </div>
         <div class='col-sm'>
             <form action="{{ url_for('joingame') }}" name="joining" method="get">
-                <button class="btn btn-primary pers" type="submit">Join Game</button>
+                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Join Game</button>
             </form>
         </div>
     </div>
