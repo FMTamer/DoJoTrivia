@@ -23,16 +23,26 @@
     <br>
     <table class='w-100' id='kech'>
         <tr style='width: auto'>
-            <td><button class="btn btn-primary answer w-100" onclick='kech()' id ='answer0'></button></td>
-            <td><button class="btn btn-primary answer w-100" onclick='kech()' id='answer2'></button></button></td>
+            <td><button class="btn btn-primary answer w-100" id ='answer0'></button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer2'></button></button></td>
         </tr>
         <tr>
-            <td><button class="btn btn-primary answer w-100" onclick='kech()' id='answer1'></button></td>
-            <td><button class="btn btn-primary answer w-100" onclick="kech()" id='answer3'></button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer1'></button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer3'></button></td>
         </tr>
     </table>
 
-    <strong class='h1'><h1 id='feedback'></h1></strong>
+    <div id='wronghidden' style='display: none'>
+        <form action="{{ url_for('aboutus') }}" method="post">
+            <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
+        </form>
+    </div>
+    <div id='corhidden' style='display: none'>
+        <form action="{{ url_for('aboutus') }}" method="post">
+            <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
+        </form>
+    </div>
+
     <p class='text-center'>{{ coranswer }}
     <br>
     {{ test  }}
@@ -44,6 +54,9 @@
     <br/>
     {{ coranswers }}
     <br/>
+
+
+
     <div id='getJSON'>
         {{ jsonfile }}
     </div>
@@ -77,17 +90,22 @@
 
         $( ".answer" ).click(function() {
             // remember selected answer
-            var qq = $(this).text();
+            var button_text = $(this).text();
             // compares given answers with correct answer
             var given_answer =  quizlist.q0[2];
-            if (given_answer===qq){
-                document.getElementById("feedback").innerHTML = 'Correct!';
+            if (given_answer===button_text){
+                document.getElementById("kech").innerHTML = '<strong class="h1 waitmsg">Correct!</strong>';
+                document.getElementById("corhidden").style.display = "block";
             }
-            else if (given_answer != qq){
-                 document.getElementById("feedback").innerHTML = 'Wrong! The correct answer is:<br/>'+given_answer;
+            else if (given_answer != button_text){
+                 document.getElementById("kech").innerHTML = '<strong class="h1 waitmsg">Wrong! The correct answer is:<br/>'+given_answer+'</strong>';
+                 document.getElementById("wronghidden").style.display = "block";
             }
-            // clears other text on
-            document.getElementById("kech").innerHTML = '';
+
+            function waitmsg(){
+                document.getElementById("kech").innerHTML = 'Waiting for players';
+            };
+
         })
 </script>
 {% endblock %}

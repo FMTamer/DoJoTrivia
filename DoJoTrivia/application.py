@@ -149,10 +149,13 @@ The DoJoTrivia Team"""
 
 
 
-@app.route("/about-us")
+@app.route("/about-us", methods = ['GET', 'POST'])
 def aboutus():
-    return render_template("about-us.html")
-
+    if request.method == 'GET':
+        return render_template("about-us.html")
+    else:
+        answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+        return render_template("about-us.html", answered = answered)
 
 @app.route("/personal")
 @login_required
@@ -179,6 +182,7 @@ def creategame():
         if len(rows) == 0:
             # Generates room code.
             room_ID = generate()
+            session['room_ID'] = room_ID
             # question, correct answer, incorrect-answers 0-3
             # api_call
             api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
@@ -218,7 +222,7 @@ def creategame():
                 answers[x] = random.choice(tempanswers)
                 rempos.remove(x)
                 tempanswers.remove(answers[x])
-            return render_template("answer.html", jsonfile = jsonfile, questdict=questdict, wrong_answers = wrong_answers, coranswers = coranswers, test = dictcall, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
+            return render_template("answer.html", jsonfile = jsonfile, room = session['room_ID'], wrong_answers = wrong_answers, coranswers = coranswers, test = dictcall, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer)
         else:
             return apology("You are already in a game. Go continue with that bitch or leave the game.")
 
@@ -258,14 +262,8 @@ def answer():
         coranswer = coranswer)
 
 
-@app.route('/correct_answer')
-def background_process():
-	try:
-		score = request.args.get('scores', 0, type=str)
-		if score == 1:
-			return jsonify(result='You are wise')
-		else:
-			return jsonify(result='Try again.')
-	except Exception as e:
-		return str(e)
-
+@app.route("/newquestion" , methods=['GET', 'POST'])
+@login_required
+def update_db():
+    answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    return render_template("about-us.html", answered = answered)
