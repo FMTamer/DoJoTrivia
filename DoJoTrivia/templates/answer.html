@@ -31,7 +31,14 @@
             <td><button class="btn btn-primary answer w-100" onclick="kech()" id='answer3'></button></td>
         </tr>
     </table>
-
+    <form action="{{ url_for('retreat') }}" name="retreating" method="post">
+        <fieldset>
+            <br>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">RETREAT YA FAGGOT</button>
+            </div>
+        </fieldset>
+    </form>
     <strong class='h1'><h1 id='feedback'></h1></strong>
     <p class='text-center'>{{ coranswer }}
     <br>

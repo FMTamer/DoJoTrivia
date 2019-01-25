@@ -7,6 +7,8 @@ from functools import wraps
 import random
 import requests
 from pytrivia import *
+import time
+import datetime
 
 db = SQL("sqlite:///dojo.db")
 
@@ -57,3 +59,7 @@ def generate():
 def insquote(string):
     string = string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å').replace('&rsquo;', "'").replace('&eacute;', "é").replace('&LDQUO;', "'")
     return string.replace('&RDQUO;', "'").replace('&AMP;', '&')
+
+def get_timestamp():
+	ts = time.time()
+	return  str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
