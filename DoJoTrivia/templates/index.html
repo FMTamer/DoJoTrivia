@@ -6,25 +6,63 @@
 
 {% block main %}
 
+<div class="container">
+
     <br>
     <head>
-        <h1><strong>Welcome to DoJoTrivia!</strong></h1>
+        <h1><strong>DoJoTrivia</strong></h1>
     </head>
     <hr class="line_title">
-    </hr>
-    <body>
-        <br>
-        <img src="static/logo.png" class= "float-center" alt="dojotrivia" style="height:200px"/>
-        <br>
-        <br>
-        <br>
-        <a href="register"><button type="button" class="btn btn-danger btn-lg float-center">Register Now!</button></a>
-        <br>
-        <br>
-        <br>
-        <div class="embed-responsive embed-responsive-16by9">
-          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/dQw4w9WgXcQ" style="height:80%"></iframe>
+    <br>
+    <br>
+
+      <div class="row">
+
+        <div class="col-md-8">
+          <img class="img-fluid" src="static/logo.png" style="height:500px, width:750px" alt="" >
         </div>
 
-    </body>
+        <div class="col-md-4">
+            <h3 class="my-3">Welcome to DoJoTrivia!</h3>
+            <p>Zet is hier ff tekst van de homepagina :).</p>
+            <h3 class="my-3">Features:</h3>
+            <ul>
+                <li>Trivia Questions!</li>
+                <li>1 Versus 1 Multiplayer!</li>
+                <li>Match History and Stats!</li>
+                <li>Create your own quizes!(Future)</li>
+            </ul>
+            <form action="{{ url_for('register') }}" name="registering" method="get">
+                <br>
+                <div class="form-group">
+                    <button class="btn btn-warning btn-lg" type="submit">Register Now!</button>
+                </div>
+            </form>
+        </div>
+      </div>
+
+      <h3 class="my-4">In-Game Screenshots:</h3>
+
+      <div class="row">
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+        </div>
+
+      </div>
+    </div>
+  </body>
 {% endblock %}
+

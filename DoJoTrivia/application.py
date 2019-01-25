@@ -293,7 +293,7 @@ def retreat():
 @login_required
 def update_db():
     x = 0
-    while x == 0:
-        pass
+    #while x == 0:
+        #pass
         # answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] + 1
     return render_template('answer.html')
