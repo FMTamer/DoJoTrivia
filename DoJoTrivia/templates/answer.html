@@ -32,17 +32,6 @@
         </tr>
     </table>
 
-    <form action="{{ url_for('retreat') }}" name="retreating" method="post">
-        <fieldset>
-            <br>
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">RETREAT YA FAGGOT</button>
-            </div>
-        </fieldset>
-    </form>
-    <strong class='h1'><h1 id='feedback'></h1></strong>
-
-
     <div id='wronghidden' style='display: none'>
         <form action="{{ url_for('aboutus') }}" method="post">
             <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
@@ -53,6 +42,17 @@
             <button class="btn btn-primary btn-lg" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>
+
+
+    <form action="{{ url_for('retreat') }}" name="retreating" method="post">
+        <fieldset>
+            <br>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">RETREAT YA FAGGOT</button>
+            </div>
+        </fieldset>
+    </form>
+    <strong class='h1'><h1 id='feedback'></h1></strong>
 
     <p class='text-center'>{{ coranswer }}
     <br>
@@ -90,7 +90,6 @@
         //     idArray.splice(ran, 1);
         //     answerArray.splice(rans, 1);
         // };
-
 
 
 

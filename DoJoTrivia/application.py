@@ -293,11 +293,4 @@ def retreat():
             score1 = 10, score2 = 0, time_stamp = time_stamp, completed = 1, room = room)
     return render_template("results.html")
 
-# @app.route("/newquestion" , methods=['GET', 'POST'])
-# @login_required
-# def update_db():
-#     x = 0
-#     while x == 0:
-#         wait()
-#         # answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] + 1
-#     return render_template('answer.html')
+
