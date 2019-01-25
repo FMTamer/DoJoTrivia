@@ -190,7 +190,14 @@ def creategame():
             session['room_ID'] = room_ID
 
             # api_call
-            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
+
+            quizzes = [x for x in api_call]
+            for x in quizzes:
+                del x['category'], x['type'], x['difficulty']
+
+            print(quizzes)
+            api_call = api_call[0]
 
             # store useable values
             quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
@@ -211,7 +218,7 @@ def creategame():
                 tempanswers.remove(answers[x])
 
             # render sites
-            return render_template("answer.html", room = session['room_ID'], test = tempanswers, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
+            return render_template("answer.html", room = session['room_ID'], test = quizzes, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
         else:
             return apology("You are already in a game. Go continue with that or leave the game.")
 
@@ -274,7 +281,7 @@ def answer():
         return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
         coranswer = coranswer)
 
-@app.route('/correct_answer')
+@app.route('/next_quiz', methods=['GET', 'POST'])
 def background_process():
 	return render_template('index.html')
 
