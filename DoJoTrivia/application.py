@@ -223,7 +223,7 @@ def creategame():
         else:
             return apology("You are already in a game. Go continue with that bitch or leave the game.")
 
-##
+
 @app.route("/joingame",  methods=["GET", "POST"])
 @login_required
 def joingame():
@@ -258,6 +258,36 @@ def answer():
         return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
         coranswer = coranswer)
 
+@app.route('/correct_answer')
+def background_process():
+	try:
+		score = request.args.get('scores', 0, type=str)
+		if score == 1:
+			return jsonify(result='You are wise')
+		else:
+			return jsonify(result='Try again.')
+	except Exception as e:
+		return str(e)
+
+@app.route("/retreat", methods=['POST'])
+@login_required
+def retreat():
+    time_stamp = get_timestamp()
+    user_ID = get_userID()
+    room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
+            userID = user_ID)
+    room = room[0]['game_room']
+
+    check_ID = db.execute("SELECT player_ID1 FROM game WHERE game_room = :room",
+            room = room)
+
+    if user_ID in check_ID:
+        db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
+            score1 = 0, score2 = 10, time_stamp = time_stamp, completed = 1, room = room)
+    else:
+        db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID1, completed = :completed WHERE game_room = :room",
+            score1 = 10, score2 = 0, time_stamp = time_stamp, completed = 1, room = room)
+    return render_template("results.html")
 
 @app.route("/newquestion" , methods=['GET', 'POST'])
 @login_required
@@ -267,5 +297,3 @@ def update_db():
         pass
         # answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] + 1
     return render_template('answer.html')
-
-
