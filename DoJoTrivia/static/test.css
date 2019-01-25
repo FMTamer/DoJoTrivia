@@ -118,6 +118,13 @@ p{text-align:left;
 
 }
 
+.waitmsg:
+{
+  font-size: 3rem;
+  text-transform: uppercase;
+  font-weight: bolder;
+}
+
 /*Buttons*/
 .pers{
   margin-bottom: 1rem;
