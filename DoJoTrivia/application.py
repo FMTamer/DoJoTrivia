@@ -272,7 +272,26 @@ def makeq():
 @app.route("/results")
 @login_required
 def results():
-    return render_template("results.html")
+    time_stamp = get_timestamp()
+    user_ID = get_userID()
+    room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
+            userID = user_ID)
+    room = room[0]['game_room']
+    score_P1 = 8
+    score_P2 = 4
+    if score_P1 > score_P2:
+        winnerID = db.execute("SELECT player_ID1 FROM game WHERE (completed == 0 and room == :room)", room = room)
+        winner = db.execute("SELECT username FROM users WHERE user_ID == winnerID")
+    elif score_P1 < score_P2:
+        winnerID = db.execute("SELECT player_ID2 FROM game WHERE (completed == 0 and room == :room)", room = room)
+        winner = db.execute("SELECT username FROM users WHERE user_ID == winnerID")
+        pass
+    else:
+        return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2)
+
+    return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner)
+
+
 
 @app.route("/answer", methods=['GET', 'POST'])
 @login_required
@@ -283,7 +302,7 @@ def answer():
 
 @app.route('/next_quiz', methods=['GET', 'POST'])
 def background_process():
-	return render_template('index.html')
+	return render_template('results.html')
 
 @app.route("/retreat", methods=['POST'])
 @login_required
