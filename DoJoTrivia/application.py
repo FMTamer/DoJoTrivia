@@ -188,7 +188,7 @@ def creategame():
             session['room_ID'] = room_ID
 
             # api_call
-            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results'][0]
+            api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
 
             # store useable values
             quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
