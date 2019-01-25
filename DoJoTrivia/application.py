@@ -154,8 +154,8 @@ def aboutus():
     if request.method == 'GET':
         return render_template("about-us.html")
     else:
-        db.execute("UPDATE game SET answered = answered + 2 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] != 2:
+        db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] <= 2:
             wait()
         return render_template("about-us.html", answered = session['room_ID'])
 
@@ -194,8 +194,8 @@ def creategame():
             quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
 
             # store in database
-            db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(':room_ID', 'quest', ':wa1', ':wa2', ':wa3', ':ca')",
-            room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1])
+            db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca)",
+            room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1], quest = quizlist[0])
 
             # scramble answers
             tempanswers = quizlist[2]
@@ -233,15 +233,25 @@ def joingame():
             # update database
             db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = session['room_ID'])
 
-            # load JSON from database
-            dictcall = db.execute("SELECT JSON FROM questions WHERE game_room = :room", room = session['room_ID'])[0]['JSON']
-            jsonfile = {'q'+str(1): dictcall[0]}
-            # for i in range(len(dictcall)):
-            #     jsonfile['q'+str(i)] = [dictcall[0][0], dictcall[0][1], dictcall[0][2]]
-            # jsonfile = json.dumps(jsonfile)
 
-            # load page
-            return render_template('answer.html', room = session['room_ID'], test = dictcall, coranswers = jsonfile)
+            # retrieve quiz from database
+            quizlist = db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID", room_ID = session['room_ID'])
+            question = quizlist[0]['question']
+            wrong_answers = [quizlist[0]['w_answer1'], quizlist[0]['w_answer2'], quizlist[0]['w_answer3']]
+            coranswer = quizlist[0]['cor_answer']
+
+            # scramble answers
+            tempanswers = wrong_answers
+            tempanswers.append(coranswer)
+            rempos = list(range(0, 4))
+            answers = {}
+            while rempos:
+                x = random.choice(rempos)
+                answers[x] = random.choice(tempanswers)
+                rempos.remove(x)
+                tempanswers.remove(answers[x])
+
+            return render_template('answer.html', room = session['room_ID'], test = quizlist, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer, question = question)
         else:
             return apology("This room number does not exist")
 
