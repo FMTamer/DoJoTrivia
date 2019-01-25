@@ -155,7 +155,7 @@ def aboutus():
         return render_template("about-us.html")
     else:
         db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] <= 2:
+        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < 2:
             wait()
         return render_template("about-us.html", answered = session['room_ID'])
 

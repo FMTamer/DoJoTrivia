@@ -66,5 +66,5 @@ def get_timestamp():
 	return  str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
 def wait():
-    sleep(0.50)
+    sleep(2)
 
