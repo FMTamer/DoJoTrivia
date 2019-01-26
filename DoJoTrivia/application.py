@@ -288,12 +288,19 @@ def ending_game():
             winner = winner[0]['username']
         elif score_P1 < score_P2:
             winnerID = db.execute("SELECT player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
-            winnerID = winnerID[0]['player_ID1']
+            winnerID = winnerID[0]['player_ID2']
             winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
             winner = winner[0]['username']
         else:
-            return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner)
+            db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
+                score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
+            return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Gelijkspel!")
+
+        db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
+            score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
+
         return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner)
+
 
 
 
