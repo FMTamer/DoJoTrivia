@@ -11,7 +11,7 @@ from helpers import *
 from flask import jsonify
 import requests
 import json
-
+import sqlite3
 
 
 app = Flask(__name__)
@@ -188,23 +188,34 @@ def creategame():
             # Generates room code.
             room_ID = generate()
             session['room_ID'] = room_ID
+            session['question_number'] = 0
 
-            # api_call
+
             api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
 
             quizzes = [x for x in api_call]
             for x in quizzes:
                 del x['category'], x['type'], x['difficulty']
 
-            # s
+            # generate list of tuples to insert
+            # allq = quizzes
+            # sql_tups = [(x, room_ID, insquote(allq[x]['question']), insquote(allq[x]['correct_answer']), insquote(allq[x]['incorrect_answers'][0])
+            # , insquote(allq[x]['incorrect_answers'][1]), insquote(allq[x]['incorrect_answers'][2])) for x in range(len(allq))]
+            # inject = [(1, 2, 3, 4, 5, 6, 7), (1, 2, 3, 4,)]
+            # print(sql_tups)
+            # db.executemany("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)", inject)
+            # room_ID = room_ID, wa1 = 2, wa2 = 2, wa3 = 2, ca =2, quest = 2, q_ID = 2)
+
+
+
+            # enter questions into database
             q_ID = 0
-            allq = api_call
+            allq = quizzes
             for x in allq:
                 question = insquote(x['question'])
                 correct_answer = insquote(x['correct_answer'])
                 wrong_answer = [insquote(y)for y in x['incorrect_answers']]
 
-                print(insquote(x['question']), insquote(x['correct_answer']), [insquote(y)for y in x['incorrect_answers']])
 
                 db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)",
             room_ID = room_ID, wa1 = wrong_answer[0], wa2 = wrong_answer[1], wa3 = wrong_answer[2], ca = correct_answer, quest = question, q_ID = q_ID)
@@ -216,40 +227,15 @@ def creategame():
 
             # store question in database
             quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
-
-            # store in database
-            # db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca)",
-            # room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1], quest = quizlist[0])
-
-            # # automatize
-            # loopyboi = 1
-            # for i in range(39):
-            #     # set variable to add
-            #     addable = ''
-            #     x = str(i+2)
-            #     if loopyboi % 5 == 1:
-            #         addable = x+'question'
-            #     if loopyboi % 5 == 2:
-            #         addable = x+'w_answer1'
-            #     if loopyboi % 5 == 3:
-            #         addable = x+'w_answer2'
-            #     if loopyboi % 5 == 4:
-            #         addable = x+'w_answer3'
-            #     else:
-            #         addable = x+'cor_answer'
-            #     loopyboi += 1
-            #     print(addable)
-                # db.execute("ALTER TABLE questions ADD :q text",
-                # q = i+'question',
-                # wa1 = i +'w_answer1',
-                # wa2 = i +'w_answer2',
-                # wa3 = i +'w_answer3',
-                # ca = i + 'cor_answer'
-                # )
+            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])
+            question = quiz[0]['question']
+            wrong_answers = [quiz[0]['w_answer1'], quiz[0]['w_answer2'], quiz[0]['w_answer3']]
+            cor_answer = quiz[0]['cor_answer']
+            print(question, wrong_answers, cor_answer)
 
             # scramble answers
-            tempanswers = quizlist[2]
-            tempanswers.append(quizlist[1])
+            tempanswers = wrong_answers
+            tempanswers.append(cor_answer)
             rempos = list(range(0, 4))
             answers = {}
             while rempos:
