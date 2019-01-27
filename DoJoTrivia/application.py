@@ -209,6 +209,7 @@ def creategame():
                 db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)",
             room_ID = room_ID, wa1 = wrong_answer[0], wa2 = wrong_answer[1], wa3 = wrong_answer[2], ca = correct_answer, quest = question, q_ID = q_ID)
                 q_ID += 1
+                print(db.execute("SELECT game_room FROM game WHERE game_room = :g_ID", g_ID = room_ID ))
 
 
 
