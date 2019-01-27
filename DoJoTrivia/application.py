@@ -196,6 +196,8 @@ def creategame():
             for x in quizzes:
                 del x['category'], x['type'], x['difficulty']
 
+
+
             print(quizzes)
             api_call = api_call[0]
 
@@ -205,6 +207,32 @@ def creategame():
             # store in database
             db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca)",
             room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1], quest = quizlist[0])
+
+            # automatize
+            loopyboi = 1
+            for i in range(39):
+                # set variable to add
+                addable = ''
+                x = str(i+2)
+                if loopyboi % 5 == 1:
+                    addable = x+'question'
+                if loopyboi % 5 == 2:
+                    addable = x+'w_answer1'
+                if loopyboi % 5 == 3:
+                    addable = x+'w_answer2'
+                if loopyboi % 5 == 4:
+                    addable = x+'w_answer3'
+                else:
+                    addable = x+'cor_answer'
+                loopyboi += 1
+                print(addable)
+                # db.execute("ALTER TABLE questions ADD :q text",
+                # q = i+'question',
+                # wa1 = i +'w_answer1',
+                # wa2 = i +'w_answer2',
+                # wa3 = i +'w_answer3',
+                # ca = i + 'cor_answer'
+                # )
 
             # scramble answers
             tempanswers = quizlist[2]
@@ -218,7 +246,7 @@ def creategame():
                 tempanswers.remove(answers[x])
 
             # render sites
-            return render_template("answer.html", room = session['room_ID'], test = quizzes, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
+            return render_template("answer.html", room = session['room_ID'], test = loopyboi, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
         else:
             return apology("You are already in a game. Go continue with that or leave the game.")
 
