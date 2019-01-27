@@ -196,36 +196,49 @@ def creategame():
             for x in quizzes:
                 del x['category'], x['type'], x['difficulty']
 
+            # s
+            q_ID = 0
+            allq = api_call
+            for x in allq:
+                question = insquote(x['question'])
+                correct_answer = insquote(x['correct_answer'])
+                wrong_answer = [insquote(y)for y in x['incorrect_answers']]
+
+                print(insquote(x['question']), insquote(x['correct_answer']), [insquote(y)for y in x['incorrect_answers']])
+
+                db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)",
+            room_ID = room_ID, wa1 = wrong_answer[0], wa2 = wrong_answer[1], wa3 = wrong_answer[2], ca = correct_answer, quest = question, q_ID = q_ID)
+                q_ID += 1
 
 
-            print(quizzes)
+
             api_call = api_call[0]
 
-            # store useable values
+            # store question in database
             quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
 
             # store in database
-            db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca)",
-            room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1], quest = quizlist[0])
+            # db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca)",
+            # room_ID = room_ID, wa1 = quizlist[2][0], wa2 = quizlist[2][1], wa3 = quizlist[2][2], ca = quizlist[1], quest = quizlist[0])
 
-            # automatize
-            loopyboi = 1
-            for i in range(39):
-                # set variable to add
-                addable = ''
-                x = str(i+2)
-                if loopyboi % 5 == 1:
-                    addable = x+'question'
-                if loopyboi % 5 == 2:
-                    addable = x+'w_answer1'
-                if loopyboi % 5 == 3:
-                    addable = x+'w_answer2'
-                if loopyboi % 5 == 4:
-                    addable = x+'w_answer3'
-                else:
-                    addable = x+'cor_answer'
-                loopyboi += 1
-                print(addable)
+            # # automatize
+            # loopyboi = 1
+            # for i in range(39):
+            #     # set variable to add
+            #     addable = ''
+            #     x = str(i+2)
+            #     if loopyboi % 5 == 1:
+            #         addable = x+'question'
+            #     if loopyboi % 5 == 2:
+            #         addable = x+'w_answer1'
+            #     if loopyboi % 5 == 3:
+            #         addable = x+'w_answer2'
+            #     if loopyboi % 5 == 4:
+            #         addable = x+'w_answer3'
+            #     else:
+            #         addable = x+'cor_answer'
+            #     loopyboi += 1
+            #     print(addable)
                 # db.execute("ALTER TABLE questions ADD :q text",
                 # q = i+'question',
                 # wa1 = i +'w_answer1',
@@ -246,7 +259,7 @@ def creategame():
                 tempanswers.remove(answers[x])
 
             # render sites
-            return render_template("answer.html", room = session['room_ID'], test = loopyboi, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
+            return render_template("answer.html", room = session['room_ID'], test = allq, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
         else:
             return apology("You are already in a game. Go continue with that or leave the game.")
 
