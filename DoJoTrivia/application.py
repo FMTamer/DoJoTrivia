@@ -160,10 +160,21 @@ def personal():
     #print(matches)
     return render_template("personal-page.html", username = session['username'])
 
-@app.route("/createquiz")
+@app.route("/customquiz", methods = ['GET', 'POST'])
 @login_required
-def createquiz():
-    return render_template("createquiz.html")
+def customquiz():
+    return render_template("customquiz_title.html")
+
+@app.route("/custom_question", methods = ['GET', 'POST'])
+@login_required
+def custom_question():
+    if request.method ==  'GET':
+        return render_template("custom_question.html")
+
+    return render_template("custom_question.html", test = "fatoe")
+
+
+
 
 
 
@@ -272,10 +283,10 @@ def joingame():
         else:
             return apology("This room number does not exist")
 
-@app.route("/makeq")
-@login_required
-def makeq():
-      return render_template("makeq.html")
+# @app.route("/makeq")
+# @login_required
+# def makeq():
+#       return render_template("makeq.html")
 
 @app.route("/results", methods=["GET"])
 @login_required
