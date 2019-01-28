@@ -171,9 +171,12 @@ def customquiz():
 
     session['quiz'] = request.form.get("quiztitle")
     if session['quiz']:
+        if session['quiz'] in [y for x in [list(x.values()) for x in db.execute("SELECT quiz_title FROM quizzes")] for y in x]:
+            return apology("That title is already taken")
+
         return redirect(url_for("custom_question"))
 
-    return apology("You did not fill in a question")
+    return apology("You did not fill in a title")
 
 
 @app.route("/custom_question", methods = ['GET', 'POST'])
