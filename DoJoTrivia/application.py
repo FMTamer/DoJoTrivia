@@ -160,18 +160,44 @@ def personal():
     #print(matches)
     return render_template("personal-page.html", username = session['username'])
 
+
+
+
 @app.route("/customquiz", methods = ['GET', 'POST'])
 @login_required
 def customquiz():
-    return render_template("customquiz_title.html")
+    if request.method == 'GET':
+        return render_template("customquiz_title.html")
+
+    session['quiz'] = request.form.get("quiztitle")
+    if session['quiz']:
+        return redirect(url_for("custom_question"))
+
+    return apology("You did not fill in a question")
+
 
 @app.route("/custom_question", methods = ['GET', 'POST'])
 @login_required
 def custom_question():
     if request.method ==  'GET':
-        return render_template("custom_question.html")
+        return render_template("custom_question.html", test = 1, test2 = session['quiz'])
 
-    return render_template("custom_question.html", test = "fatoe")
+    # get question and answers
+    quiz_title = session['quiz']
+    question = request.form.get("question")
+    cor_answer = request.form.get("cor_answer")
+    w_answer1 = request.form.get("w_answer1")
+    w_answer2 = request.form.get("w_answer2")
+    w_answer3 = request.form.get("w_answer3")
+    if not any([question, cor_answer, w_answer1, w_answer2, w_answer3]):
+        return apology("Please fill in all fields")
+
+    # insert question into database
+    db.execute("INSERT INTO quizzes (quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer3) VALUES (:quiz_title, :question, :cor_answer, :w_answer1, :w_answer2, :w_answer3)",
+    quiz_title = quiz_title, question = question, cor_answer = cor_answer, w_answer1 = w_answer1, w_answer2 = w_answer2, w_answer3 = w_answer3)
+
+
+    return render_template("custom_question.html", test = [question, cor_answer, w_answer1, w_answer2, w_answer3], test2 = session['quiz'])
 
 
 
