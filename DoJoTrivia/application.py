@@ -213,7 +213,10 @@ def custom_question():
 @login_required
 def creategame():
     if request.method == "GET":
-        return render_template("creategame.html")
+
+        test = list({x['quiz_title'] for x in db.execute("SELECT quiz_title FROM quizzes")})
+
+        return render_template("creategame.html", test = test)
     else:
         # Create quiz
         rows = ''
@@ -223,9 +226,8 @@ def creategame():
             session['room_ID'] = room_ID
             session['question_number'] = 0
 
-
+            # extract useable values from api
             api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
-
             quizzes = [x for x in api_call]
             for x in quizzes:
                 del x['category'], x['type'], x['difficulty']
