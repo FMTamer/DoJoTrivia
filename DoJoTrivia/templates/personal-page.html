@@ -22,6 +22,9 @@
             <form action="{{ url_for('creategame') }}" name="creating" method="post">
                 <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Create Game</button>
             </form>
+            <form action="{{ url_for('creategame') }}" name="creating" method="get">
+                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Choose Game</button>
+            </form>
         </div>
         <div class='col-sm'>
             <img src="static/logo.png" align="center" height='150px'/>

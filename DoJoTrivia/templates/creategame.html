@@ -16,7 +16,18 @@
     <br>
     <br>
     <div class="button-box col-lg-12">
-        <a href="joingame" class="btn btn-primary" role="button">Play Existing Quiz</a>
-        <a href="createquiz" class="btn btn-primary" role="button">Create New Quiz</a>
+        <form action="{{ url_for('creategame') }}" name="creating" method="post">
+                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Play quiz with random questions</button>
+        </form>
+        <form action="{{ url_for('creategame') }}" name="creating" method="post">
+          <select name="cars">
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="fiat">Fiat</option>
+            <option value="audi">Audi</option>
+          </select>
+          <br><br>
+          <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Play a custom quiz</button>
+        </form>
     </div>
 {% endblock %}

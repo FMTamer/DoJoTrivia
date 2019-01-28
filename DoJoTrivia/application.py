@@ -43,7 +43,7 @@ def register():
 
         # Checks if username or email is already in the database
         if not new_member():
-            return apology("Either username or email already taken!")
+            return apology("Username or email already taken!")
 
         if login_authentication() == False:
             return apology("Invalid username and/or password!")
@@ -165,6 +165,10 @@ def personal():
 def createquiz():
     return render_template("createquiz.html")
 
+
+
+
+
 @app.route("/creategame", methods=["GET", "POST"])
 @login_required
 def creategame():
@@ -172,10 +176,6 @@ def creategame():
         return render_template("creategame.html")
     else:
         # Create quiz
-        #questions = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
-        #question = questions[0]
-        # Generate room with unique ID and Inserts it into DataBase of website.
-        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
         rows = ''
         if len(rows) == 0:
             # Generates room code.
@@ -189,17 +189,6 @@ def creategame():
             quizzes = [x for x in api_call]
             for x in quizzes:
                 del x['category'], x['type'], x['difficulty']
-
-            # generate list of tuples to insert
-            # allq = quizzes
-            # sql_tups = [(x, room_ID, insquote(allq[x]['question']), insquote(allq[x]['correct_answer']), insquote(allq[x]['incorrect_answers'][0])
-            # , insquote(allq[x]['incorrect_answers'][1]), insquote(allq[x]['incorrect_answers'][2])) for x in range(len(allq))]
-            # inject = [(1, 2, 3, 4, 5, 6, 7), (1, 2, 3, 4,)]
-            # print(sql_tups)
-            # db.executemany("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)", inject)
-            # room_ID = room_ID, wa1 = 2, wa2 = 2, wa3 = 2, ca =2, quest = 2, q_ID = 2)
-
-
 
             # enter questions into database
             q_ID = 0
