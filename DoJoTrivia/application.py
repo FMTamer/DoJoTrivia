@@ -226,14 +226,11 @@ def creategame():
 
 
 
-            api_call = api_call[0]
-
-            # store question in database
-            quizlist = (insquote(api_call['question']), insquote(api_call['correct_answer']), [insquote(x) for x in api_call['incorrect_answers']])
-            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])
-            question = quiz[0]['question']
-            wrong_answers = [quiz[0]['w_answer1'], quiz[0]['w_answer2'], quiz[0]['w_answer3']]
-            cor_answer = quiz[0]['cor_answer']
+            # get question and answers from database
+            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
+            question = quiz['question']
+            wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+            cor_answer = quiz['cor_answer']
             print(question, wrong_answers, cor_answer)
 
             # scramble answers
@@ -248,7 +245,7 @@ def creategame():
                 tempanswers.remove(answers[x])
 
             # render sites
-            return render_template("answer.html", room = session['room_ID'], test = allq, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = quizlist[1], question = quizlist[0])
+            return render_template("answer.html", room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
         else:
             return apology("You are already in a game. Go continue with that or leave the game.")
 
@@ -270,18 +267,20 @@ def joingame():
         session['room_ID'] = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))][0]
         if session['room_ID']:
             # update database
+            room_ID = session['room_ID']
+            session['question_number'] = 0
             db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = session['room_ID'])
 
 
-            # retrieve quiz from database
-            quizlist = db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID", room_ID = session['room_ID'])
-            question = quizlist[0]['question']
-            wrong_answers = [quizlist[0]['w_answer1'], quizlist[0]['w_answer2'], quizlist[0]['w_answer3']]
-            coranswer = quizlist[0]['cor_answer']
+            # get question and answers from database
+            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
+            question = quiz['question']
+            wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+            cor_answer = quiz['cor_answer']
 
             # scramble answers
             tempanswers = wrong_answers
-            tempanswers.append(coranswer)
+            tempanswers.append(cor_answer)
             rempos = list(range(0, 4))
             answers = {}
             while rempos:
@@ -290,14 +289,14 @@ def joingame():
                 rempos.remove(x)
                 tempanswers.remove(answers[x])
 
-            return render_template('answer.html', room = session['room_ID'], test = quizlist, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = coranswer, question = question)
+            return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
         else:
             return apology("This room number does not exist")
 
 @app.route("/makeq")
 @login_required
 def makeq():
-    return render_template("makeq.html")
+      return render_template("makeq.html")
 
 @app.route("/results", methods=["GET"])
 @login_required
@@ -340,9 +339,93 @@ def answer():
         return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
         coranswer = coranswer)
 
-@app.route('/next_quiz', methods=['GET', 'POST'])
-def background_process():
-    return redirect(url_for("ending_game"))
+@app.route('/quizC', methods=['GET', 'POST'])
+def correct_answer():
+    # wait for other player
+    prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
+    db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    p_answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
+    while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
+        wait()
+    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID and completed = 0", room_ID = session['room_ID'])
+
+
+    # update right scores
+    if db.execute("SELECT player_ID1 FROM game WHERE game_room = :room_ID and completed = 0" , room_ID = session["room_ID"])[0]['player_ID1'] == session['user_id']:
+        db.execute("UPDATE game SET score_P1 = score_P1 + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+        print('poep')
+    elif db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID and completed = 0" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id']:
+        print(db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID and completed = 0" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id'])
+        db.execute("UPDATE game SET score_P2 = score_P2 + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+        print('kech')
+
+    # check if questions are left
+    session['question_number'] += 1
+    room_ID = session['room_ID']
+    if session['question_number'] < len(db.execute("SELECT * FROM questions WHERE game_room = :room_ID", room_ID = room_ID)):
+        question_number = session['question_number']
+
+
+        # get question and answers from database
+        quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
+        question = quiz['question']
+        wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+        cor_answer = quiz['cor_answer']
+
+        # scramble answers
+        tempanswers = wrong_answers
+        tempanswers.append(cor_answer)
+        rempos = list(range(0, 4))
+        answers = {}
+        while rempos:
+            x = random.choice(rempos)
+            answers[x] = random.choice(tempanswers)
+            rempos.remove(x)
+            tempanswers.remove(answers[x])
+
+        return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
+
+    # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
+    return render_template('index.html')
+
+@app.route('/quizW', methods=['GET', 'POST'])
+def wrong_answer():
+    # wait for other player
+    prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
+    db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    p_answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
+    while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
+        wait()
+    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID and completed = 0", room_ID = session['room_ID'])
+
+
+    session['question_number'] += 1
+    room_ID = session['room_ID']
+    if session['question_number'] < len(db.execute("SELECT * FROM questions WHERE game_room = :room_ID", room_ID = room_ID)):
+        question_number = session['question_number']
+
+
+        # get question and answers from database
+        quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
+        question = quiz['question']
+        wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+        cor_answer = quiz['cor_answer']
+
+        # scramble answers
+        tempanswers = wrong_answers
+        tempanswers.append(cor_answer)
+        rempos = list(range(0, 4))
+        answers = {}
+        while rempos:
+            x = random.choice(rempos)
+            answers[x] = random.choice(tempanswers)
+            rempos.remove(x)
+            tempanswers.remove(answers[x])
+
+        return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
+
+    # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
+    return render_template('index.html')
 
 @app.route("/retreat", methods=['POST'])
 @login_required
@@ -363,5 +446,8 @@ def retreat():
         db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID1, completed = :completed WHERE game_room = :room",
             score1 = 10, score2 = 0, time_stamp = time_stamp, completed = 1, room = room)
     return render_template("results.html")
+
+
+
 
 
