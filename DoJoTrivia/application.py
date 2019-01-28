@@ -218,25 +218,33 @@ def creategame():
         options = ['Random']+list({x['quiz_title'] for x in db.execute("SELECT quiz_title FROM quizzes")})
 
         return render_template("creategame.html", options = options, test3 = json.dumps(options), variable = 3)
-    else:
-        # Create quiz
-        rows = ''
-        if len(rows) == 0:
-            # Generates room code.
-            room_ID = generate()
-            session['room_ID'] = room_ID
-            session['question_number'] = 0
 
-            # extract useable values from api
+    # Create quiz
+    rows = ''
+    if len(rows) == 0:
+        # ensure both ways to get to this page work
+        option = request.form.get("option")
+        if option:
+            option = option[1:-1]
+        else:
+            option = 'Random'
+            print('--------------------')
+
+        # Generates room code.
+        room_ID = generate()
+        session['room_ID'] = room_ID
+        session['question_number'] = 0
+
+        # get random quiz
+        quizzes = []
+        if option == 'Random':
             api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
             quizzes = [x for x in api_call]
             for x in quizzes:
                 del x['category'], x['type'], x['difficulty']
 
-            # enter questions into database
             q_ID = 0
-            allq = quizzes
-            for x in allq:
+            for x in quizzes:
                 question = insquote(x['question'])
                 correct_answer = insquote(x['correct_answer'])
                 wrong_answer = [insquote(y)for y in x['incorrect_answers']]
@@ -247,29 +255,47 @@ def creategame():
                 q_ID += 1
 
 
-
-            # get question and answers from database
-            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
-            question = quiz['question']
-            wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
-            cor_answer = quiz['cor_answer']
-            print(question, wrong_answers, cor_answer)
-
-            # scramble answers
-            tempanswers = wrong_answers
-            tempanswers.append(cor_answer)
-            rempos = list(range(0, 4))
-            answers = {}
-            while rempos:
-                x = random.choice(rempos)
-                answers[x] = random.choice(tempanswers)
-                rempos.remove(x)
-                tempanswers.remove(answers[x])
-
-            # render sites
-            return render_template("answer.html", room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
+        # get selected quiz
         else:
-            return apology("You are already in a game. Go continue with that or leave the game.")
+            sel_quiz = db.execute("SELECT question, cor_answer, w_answer1, w_answer2, w_answer3 FROM quizzes WHERE quiz_title = :q_title", q_title = option)
+            print(sel_quiz)
+            q_ID = 0
+            for x in sel_quiz:
+                question = x['question']
+                correct_answer = x['cor_answer']
+                wrong_answer = [x['w_answer1'],  x['w_answer2'], x['w_answer3']]
+                print(question, correct_answer, wrong_answer)
+
+                db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)",
+            room_ID = room_ID, wa1 = wrong_answer[0], wa2 = wrong_answer[1], wa3 = wrong_answer[2], ca = correct_answer, quest = question, q_ID = q_ID)
+                q_ID += 1
+
+
+
+
+
+        # get question and answers from database
+        quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
+        question = quiz['question']
+        wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+        cor_answer = quiz['cor_answer']
+        print(question, wrong_answers, cor_answer)
+
+        # scramble answers
+        tempanswers = wrong_answers
+        tempanswers.append(cor_answer)
+        rempos = list(range(0, 4))
+        answers = {}
+        while rempos:
+            x = random.choice(rempos)
+            answers[x] = random.choice(tempanswers)
+            rempos.remove(x)
+            tempanswers.remove(answers[x])
+
+        # render sites
+        return render_template("answer.html", room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question,  option = option)
+    else:
+        return apology("You are already in a game. Go continue with that or leave the game.")
 
 
 @app.route("/joingame",  methods=["GET", "POST"])
