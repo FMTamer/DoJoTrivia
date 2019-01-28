@@ -10,6 +10,7 @@ from pytrivia import *
 import time
 from time import sleep
 import datetime
+from passlib.apps import custom_app_context as pwd_context
 
 db = SQL("sqlite:///dojo.db")
 
@@ -40,6 +41,32 @@ def login_required(f):
             return apology("You have to be logged in to visit this page!")
         return f(*args, **kwargs)
     return decorated_function
+
+def get_username_field():
+    return request.form.get("username")
+
+def get_password_field():
+    return request.form.get("password")
+
+def get_confirmation_field():
+    return request.form.get("confirmation")
+
+def get_emailaddress_field():
+    return request.form.get("emailaddress")
+
+def new_member():
+    result = db.execute("INSERT INTO users (username, hash_password, email) VALUES(:username, :hash_password, :email)",
+    username=get_username_field(), hash_password=pwd_context.hash(get_password_field()), email=get_emailaddress_field())
+    return result
+
+def login_authentication():
+    rows = db.execute("SELECT * FROM users WHERE username = :username", username=get_username_field())
+    if len(rows) != 1 or not pwd_context.verify(get_password_field(), rows[0]["hash_password"]):
+        return False
+    else:
+        session["user_id"] = rows[0]["user_ID"]
+        session['username'] = rows[0]['username']
+        return True
 
 def get_userID():
     return session["user_id"]

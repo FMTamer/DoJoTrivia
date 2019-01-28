@@ -35,29 +35,19 @@ def index():
 def register():
     if request.method == "POST":
         # Checks if the forms are filled out.
-        if not request.form.get("username") or not request.form.get("password") or not request.form.get("confirmation") or not request.form.get("emailaddress"):
+        if not get_username_field() or not get_password_field() or not get_confirmation_field() or not get_emailaddress_field():
             return apology("Make sure to fill in all fields!")
 
-        elif request.form.get("password") != request.form.get("confirmation"):
+        elif get_password_field() != get_confirmation_field():
             return apology("Passwords do not match!")
 
-        # Executes database into result and hashes the password
-        result = db.execute("INSERT INTO users (username, hash_password, email) VALUES(:username, :hash_password, :email)",
-        username=request.form.get("username"), hash_password=pwd_context.hash(request.form.get("password")), email=request.form.get("emailaddress"))
         # Checks if username or email is already in the database
-        if not result:
+        if not new_member():
             return apology("Either username or email already taken!")
 
-        # query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
-        # ensure username exists and password is correct
-
-        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash_password"]):
+        if login_authentication() == False:
             return apology("Invalid username and/or password!")
 
-        # remember which user has logged in
-        session["user_id"] = rows[0]["user_ID"]
-        session['username'] = rows[0]['username']
 
         port = 587
         smtp_server = "smtp.gmail.com"
@@ -79,6 +69,7 @@ The DoJoTrivia Team"""
             server.starttls(context=context)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message)
+
         return redirect(url_for("personal"))
     else:
         return render_template("register.html")
@@ -90,7 +81,7 @@ def login():
 
     if request.method == "POST":
         # Checks if the forms are filled out.
-        if not request.form.get("username") or not request.form.get("password"):
+        if not get_username_field() or not get_password_field():
             return apology("Make sure to fill in all fields!")
 
         # query database for username
@@ -165,6 +156,8 @@ def aboutus():
 @app.route("/personal")
 @login_required
 def personal():
+    #matches = db.execute("SELECT username FROM users WHERE user_ID = :player_ID", player_ID = ("Select from game")
+    #print(matches)
     return render_template("personal-page.html", username = session['username'])
 
 @app.route("/createquiz")
@@ -299,7 +292,6 @@ def makeq():
 @login_required
 def ending_game():
     if request.method == "GET":
-        print("KANKER")
         time_stamp = get_timestamp()
         user_ID = get_userID()
         room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
@@ -384,7 +376,7 @@ def correct_answer():
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
     # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
-    return render_template('index.html')
+    return render_template('results.html')
 
 @app.route('/quizW', methods=['GET', 'POST'])
 def wrong_answer():
