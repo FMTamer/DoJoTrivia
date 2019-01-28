@@ -12,29 +12,33 @@
     <hr class="line_title">
     <br>
     <br>
-    <h2>Roomnumber: <i>placeholder</i></h2>
-    <br>
-    <br>
         <form action="{{ url_for('creategame') }}" name="creating" method="post">
           <label for="sel1">Select quiz to play:</label>
           <select class="form-control" id="sel1">
-            <option>{{ test[0] }}</option>
-            <option>{{ test[1] }}</option>
-            <option id='test'></option>
-            <option>4</option>
+            <!--<option>{{ options[0] }}</option>-->
+            <!--<option>{{ options[1] }}</option>-->
+            <!--<option id='test'></option>-->
+            <!--<option>4</option>-->
           </select>
           <br><br>
           <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Play</button>
         </form>
-    <p>{{ test }}</p>
+    <p>{{ options }}
+    <br>
+    {{ test3 }}
+    </p>
 
-    <p>test id:<div class='kech'></div></p>
+    <p id='test2'></p>
 
     <script type="text/javascript">
     window.onload = function() {
-        var q ='{{ test[2] }}';
-        document.getElementById('test').innerHTML = q;
-        document.getElementsByClassName('kech').innerHTML =  'a';
+        var bar = '{{ options }}';
+        bar = bar.slice(1, bar.length-1);
+        bar = bar.split(", ");
+
+
+        document.getElementById('sel1').innerHTML = "<option>" + bar[0] + "</option>";
+        document.getElementById('test2').innerHTML = bar[0];
     };
     </script>
 {% endblock %}

@@ -214,9 +214,10 @@ def custom_question():
 def creategame():
     if request.method == "GET":
 
-        test = list({x['quiz_title'] for x in db.execute("SELECT quiz_title FROM quizzes")})
+        # create options for quizzes
+        options = ['Random']+list({x['quiz_title'] for x in db.execute("SELECT quiz_title FROM quizzes")})
 
-        return render_template("creategame.html", test = test)
+        return render_template("creategame.html", options = options, test3 = json.dumps(options), variable = 3)
     else:
         # Create quiz
         rows = ''
