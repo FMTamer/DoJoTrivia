@@ -165,6 +165,9 @@ def aboutus():
 @app.route("/personal")
 @login_required
 def personal():
+    matches = db.execute("SELECT player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2 FROM game WHERE completed == 1 and (player_ID1 == :userID or player_ID2 == :userID)"
+    , userID = session["user_id"] )
+    print(matches)
     return render_template("personal-page.html", username = session['username'])
 
 @app.route("/createquiz")
@@ -300,7 +303,6 @@ def makeq():
 @login_required
 def ending_game():
     if request.method == "GET":
-        print("KANKER")
         time_stamp = get_timestamp()
         user_ID = get_userID()
         room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
