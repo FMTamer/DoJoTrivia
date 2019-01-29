@@ -176,7 +176,7 @@ def customquiz():
 
         return redirect(url_for("custom_question"))
 
-    return apology("You did not fill in a title")
+    return apology("You did not give a title!")
 
 
 @app.route("/custom_question", methods = ['GET', 'POST'])
