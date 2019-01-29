@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Custom Game
+{% endblock %}
+
+{% block main %}
+    <br>
+    <head>
+        <h1><strong>Create a custom Quiz</strong></h1>
+    </head>
+    <hr class="line_title"/>
+    <br/>
+    <strong class='h1'>
+        <div id='questionmsg'>
+            Title
+        </div>
+    </strong>
+    <form name='title' action="{{ url_for('customquiz') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="quiztitle" placeholder="Title" type="text"/>
+                <br/>
+                <br/>
+                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Next</button>
+            </div>
+        </fieldset>
+    </form>
+
+{% endblock %}
