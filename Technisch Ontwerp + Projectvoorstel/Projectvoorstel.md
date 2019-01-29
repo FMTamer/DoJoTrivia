@@ -1,23 +1,21 @@
 # Projectvoorstel
 Door Musa Karim, Vedran Marinovic & Frank Tamer
 ## Samenvatting
-Voor ons project gaan we een webapplicatie, genaamd DoJoTrivia, bouwen waarmee mensen triviavragen kunnen beantwoorden. Deze vragen zullen om en om beantwoord worde, en aan het einde is er een scorebord te zien.
+Voor ons project gaan we een webapplicatie, genaamd DoJoTrivia, bouwen waarmee mensen triviavragen kunnen beantwoorden. Deze vragen zullen om en om beantwoord worden, en aan het einde is er een scorebord te zien.
 
 ## Features
 - Registratie en login
 - Quizzes
-- Multiplayer
-- Scoreboard aan het eind van een game
+- Multiplayer(1 tegen 1)
+- Scoreboard met de resultaten aan het eind van een game
 - Contactpagina (voor het rapporteren van bugs, geven van suggesties, etc.)
 - Mail ter bevestiging van verwerking van registratie en feedback
 
 ### Extra features
-- Notificaties voor wanneer je voor een quiz wordt uitgenodigd en wanneer een quiz naar de volgende vraag springt.
-- Een geschiedenis van quizzes per gebruiker.
-- Zelf quizzes maken
-- Geschiedenis van winsten en verliezen per gebruiker
-
-## Afhankelijkheden
+- Een geschiedenis van quizzes per gebruiker
+- Community quizes
+- Geschiedenis van alle games die gespeeld zijn met alle bijbehorende informatie
+- Statistieken met betrekking tot hoe goed/slecht een gebruiker het heeft gedaan sinds de registratie
 
 ### Databronnen
 - Open Trivia Database (van https://opentdb.com/api_config.php)
@@ -34,4 +32,4 @@ Voor ons project gaan we een webapplicatie, genaamd DoJoTrivia, bouwen waarmee m
 ### Moeilijkheden
 - Multiplayer implementeren
 - Waarden krijgen voor scoreboard
-- (Gebruikers eigen quizzes laten maken, indien mogelijk)
+- (Gebruikers eigen quizzes laten maken, uploaden en dat de community die kan)
