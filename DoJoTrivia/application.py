@@ -350,12 +350,13 @@ def ending_game():
     user_ID = get_userID()
     room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
             userID = user_ID)
-    room = room[0]['game_room']
+    room = session['room_ID']
 
-    scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE (completed == 0 and game_room == :room)")
+    scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
     score_P1 = scores[0]['score_P1']
     score_P2 = scores[0]['score_P2']
 
+    print("Kanker1")
     if score_P1 > score_P2:
         playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
         winnerID = playersID[0]['player_ID1']
@@ -367,9 +368,11 @@ def ending_game():
 
         player2 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
         player2 = player2[0]['username']
+        print("Kanker2")
+
     elif score_P1 < score_P2:
-        winnerID = db.execute("SELECT player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
-        winnerID = winnerID[0]['player_ID2']
+        playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
+        winnerID = playersID[0]['player_ID2']
         other_player = playersID[0]['player_ID1']
 
         winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
@@ -377,17 +380,17 @@ def ending_game():
         player2 = winner
 
         player1 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
-        player1 = player2[0]['username']
+        player1 = player1[0]['username']
+        print("Kanker3")
     else:
         db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
             score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
         return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Gelijkspel!")
-
+        print("Kanker4")
     db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
         score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
-
-    return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner)
-
+    print("Kanker5")
+    return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner, username1 = player1 , username2 = player2)
 
 
 
