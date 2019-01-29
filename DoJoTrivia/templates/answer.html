@@ -34,12 +34,12 @@
 
     <div id='wronghidden' style='display: none'>
         <form action="{{ url_for('wrong_answer') }}" method="post">
-            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();this.disabled=true'>WRONG! Next question</button>
+            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();'>WRONG! Next question</button>
         </form>
     </div>
     <div id='corhidden' style='display: none'>
         <form action="{{ url_for('correct_answer') }}" method="post">
-            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();this.disabled=true'>CORRECT! Next question</button>
+            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();'>CORRECT! Next question</button>
         </form>
     </div>
 
@@ -106,12 +106,13 @@
                  document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Wrong! The correct answer is:<br/>'+given_answer+'</strong>';
                  document.getElementById("wronghidden").style.display = "block";
             }
+        })
 
             function waitmsg(){
-                document.getElementById("maincon").innerHTML = 'Waiting for players';
-            };
+                document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Waiting for players</strong>';
+            }
 
-        })
+
 
 
 
