@@ -50,7 +50,7 @@
         <fieldset>
             <h5 class="contact_form_desc">Below you can also send us a message to get in touch with us. Make sure you have filled in all the fields and we will try to respond within 24 hours.</h5>
             <div class="form-group">
-                <select class="form-control" id="FormSelectReason">
+                <select class="form-control" id="FormSelectReason" required>
                     <option disabled selected value>Select Reason</option>
                     <option>Report a bug</option>
                     <option>Suggestions</option>
@@ -58,10 +58,10 @@
                 </select>
             </div>
             <div class="form-group">
-                <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text"/>
+                <input autocomplete="off" class="form-control" required name="username" placeholder="Username" type="text"/>
             </div>
             <div class="form-group">
-                <input class="form-control" name="emailaddress" placeholder="E-mail" type="email"/>
+                <input class="form-control" required name="emailaddress" placeholder="E-mail" type="email"/>
             </div>
             <div class="form-group">
                 <textarea class="form-control" id="contact_message" placeholder="Type your message in here!" rows="4"></textarea>

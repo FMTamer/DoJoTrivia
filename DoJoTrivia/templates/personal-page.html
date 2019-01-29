@@ -11,20 +11,16 @@
     </head>
     <hr class="line_title">
     <br>
-    <p>
-        Here you can create or join a game. Keep in mind that you can only be active in 1 game at once.
-        you can also easily check your match history to see how well you did!
-        If you scroll more down you can see the statistic of your DoJoTrivia career. Make sure to compare with your friend!
+    <p class="text-center">
+        Here you can create or join a game. Keep in mind that you can only be active in 1 game at a time!
+        You can also easily check your match history to see how well you did!
+        A little lower, you can see your DoJoTrivia statistics.
     </p>
     <div class='row'>
         <br>
         <div class='col-sm'>
-            <form action="{{ url_for('creategame') }}" name="creating" method="post">
-                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Create Game</button>
-            </form>
-            <br/>
             <form action="{{ url_for('creategame') }}" name="creating" method="get">
-                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Choose Game</button>
+                <button class="btn btn-primary btn-outline-danger btn-lg" type="submit">Create Game</button>
             </form>
         </div>
         <div class='col-sm'>
@@ -32,11 +28,7 @@
         </div>
         <div class='col-sm'>
             <form action="{{ url_for('joingame') }}" name="joining" method="get">
-                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Join Game</button>
-            </form>
-            <br/>
-            <form action="{{ url_for('customquiz') }}" name="joining" method="get">
-                <button class="btn btn-primary btn-outline-success btn-lg" type="submit">Go to custom quiz</button>
+                <button class="btn btn-primary btn-outline-danger btn-lg" type="submit">Join Game</button>
             </form>
         </div>
     </div>

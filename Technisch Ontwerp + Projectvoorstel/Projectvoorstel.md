@@ -1,25 +1,24 @@
 # Projectvoorstel
-Door Musa Karim, Vedran Marinovic, Renzo Pos & Frank Tamer
+Door Musa Karim, Vedran Marinovic & Frank Tamer
 ## Samenvatting
-Voor ons project gaan we een webapplicatie, genaamd  DoJoTrivia (placeholder), bouwen waarmee mensen triviavragen kunnen beantwoorden. Deze vragen worden  in real-time beantwoord en mensen kunnen dan ook tijdens een quiz hun score zien en hun  positie op de scoreboard vergeleken met andere mensen.
+Voor ons project gaan we een webapplicatie, genaamd DoJoTrivia, bouwen waarmee mensen triviavragen kunnen beantwoorden. Deze vragen zullen om en om beantwoord worden, en aan het einde is er een scorebord te zien.
 
 ## Features
 - Registratie en login
-- Quizzes in real-time
-- Multiplayer (en singleplayer)
-- Scoreboard in real-time
-- Contactpagina  (voor het rapporteren van bugs, suggesties, etc.)
-- Zelf quizzes maken
+- Quizzes
+- Multiplayer(1 tegen 1)
+- Scoreboard met de resultaten aan het eind van een game
+- Contactpagina (voor het rapporteren van bugs, geven van suggesties, etc.)
+- Mail ter bevestiging van verwerking van registratie en feedback
 
 ### Extra features
-- Notificaties voor wanneer je voor een quiz wordt uitgenodigd en wanneer een quiz  naar de volgende vraag springt.
-- Spelers kunnen elk een categorie en moeilijkheidsgraad kiezen waar de vraag om draait.
-- Een geschiedenis van quizzes per gebruiker.
-
-## Afhankelijkheden
+- Een geschiedenis van quizzes per gebruiker
+- Community quizes
+- Geschiedenis van alle games die gespeeld zijn met alle bijbehorende informatie
+- Statistieken met betrekking tot hoe goed/slecht een gebruiker het heeft gedaan sinds de registratie
 
 ### Databronnen
-- http://jservice.io/
+- Open Trivia Database (van https://opentdb.com/api_config.php)
 ### Externe componenten
 - Bootstrap
 - Flask
@@ -31,7 +30,6 @@ Voor ons project gaan we een webapplicatie, genaamd  DoJoTrivia (placeholder), b
 - Kahoot ([https://kahoot.it/](https://kahoot.it/ "https://kahoot.it/"). Kahoot heeft een zeer simpel en kleurrijk design.
 
 ### Moeilijkheden
-- Real-time multiplayer
-- Real-time scoreboard
-
-
+- Multiplayer implementeren
+- Waarden krijgen voor scoreboard
+- (Gebruikers eigen quizzes laten maken, uploaden en dat de community die kan)
