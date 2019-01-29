@@ -355,18 +355,33 @@ def ending_game():
         room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
                 userID = user_ID)
         room = room[0]['game_room']
-        score_P1 = 8
-        score_P2 = 4
+
+        scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE (completed == 0 and game_room == :room)")
+        score_P1 = scores[0]['score_P1']
+        score_P2 = scores[0]['score_P2']
+
         if score_P1 > score_P2:
-            winnerID = db.execute("SELECT player_ID1 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
-            winnerID = winnerID[0]['player_ID1']
+            playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
+            winnerID = playersID[0]['player_ID1']
+            other_player = playersID[0]['player_ID2']
+
             winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
             winner = winner[0]['username']
+            player1 = winner
+
+            player2 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
+            player2 = player2[0]['username']
         elif score_P1 < score_P2:
             winnerID = db.execute("SELECT player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
             winnerID = winnerID[0]['player_ID2']
+            other_player = playersID[0]['player_ID1']
+
             winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
             winner = winner[0]['username']
+            player2 = winner
+
+            player1 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
+            player1 = player2[0]['username']
         else:
             db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
                 score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
