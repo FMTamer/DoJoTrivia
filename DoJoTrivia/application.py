@@ -434,7 +434,7 @@ def correct_answer():
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
     # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
-    return render_template('results.html')
+    return redirect(url_for("results"))
 
 @app.route('/quizW', methods=['GET', 'POST'])
 def wrong_answer():
