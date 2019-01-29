@@ -51,7 +51,7 @@ def register():
 
         port = 587
         smtp_server = "smtp.gmail.com"
-        sender_email = "dojotrivia@gmail.com"
+        sender_email = "dojopython.webik@gmail.com"
         receiver_email = request.form.get("emailaddress")
         password = "webik2019_"
         message = """\
@@ -115,15 +115,12 @@ def contact():
     if request.method == "GET":
         return render_template("contact.html")
     else:
-        if not request.form.get("username") or not request.form.get("emailaddress"):
-            return apology("Make sure to fill in all fields!")
-        else:
-            port = 587
-            smtp_server = "smtp.gmail.com"
-            sender_email = "dojotrivia@gmail.com"
-            receiver_email = request.form.get("emailaddress")
-            password = "webik2019_"
-            message = """\
+        port = 587
+        smtp_server = "smtp.gmail.com"
+        sender_email = "dojopython.webik@gmail.com"
+        receiver_email = request.form.get("emailaddress")
+        password = "webik2019_"
+        message = """\
 Subject: Thank you for the feedback!
 Dear player,
 
@@ -133,12 +130,12 @@ Sincerely,
 
 The DoJoTrivia Team"""
 
-            context = ssl.create_default_context()
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls(context=context)
-                server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, message)
-            return apology("Thanks for the feedback!")
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message)
+        return apology("Thanks for the feedback!")
 
 
 
@@ -473,7 +470,7 @@ def wrong_answer():
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
     # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
-    return render_template('index.html')
+    return render_template('results.html')
 
 @app.route("/retreat", methods=['POST'])
 @login_required
