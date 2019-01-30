@@ -374,7 +374,7 @@ def correct_answer():
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
     time_stamp = get_timestamp()
-    db.execute("UPDATE game SET time = :time_stamp", time_stamp = time_stamp)
+    db.execute("UPDATE game SET time = :time_stamp WHERE game_room = :game_ID", time_stamp = time_stamp, game_ID = session['room_ID'])
     return redirect(url_for("ending_game"))
 
 @app.route('/quizW', methods=['GET', 'POST'])
@@ -414,7 +414,7 @@ def wrong_answer():
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
     time_stamp = get_timestamp()
-    db.execute("UPDATE game SET time = :time_stamp", time_stamp = time_stamp)
+    db.execute("UPDATE game SET time = :time_stamp WHERE game_room = :game_ID", time_stamp = time_stamp, game_ID = session['room_ID'])
     return redirect(url_for("ending_game"))
 
 @app.route("/retreat", methods=['POST'])
