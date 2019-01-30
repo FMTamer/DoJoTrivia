@@ -50,10 +50,9 @@ def register():
 
         # send_register_mail(request.form.get("emailaddress"))
 
-
         return redirect(url_for("personal"))
-    else:
-        return render_template("register.html")
+
+    return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
