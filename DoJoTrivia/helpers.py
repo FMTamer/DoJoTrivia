@@ -42,26 +42,14 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def get_username_field():
-    return request.form.get("username")
-
-def get_password_field():
-    return request.form.get("password")
-
-def get_confirmation_field():
-    return request.form.get("confirmation")
-
-def get_emailaddress_field():
-    return request.form.get("emailaddress")
-
 def new_member():
     result = db.execute("INSERT INTO users (username, hash_password, email) VALUES(:username, :hash_password, :email)",
-    username=get_username_field(), hash_password=pwd_context.hash(get_password_field()), email=get_emailaddress_field())
+    username=request.form.get("username"), hash_password=pwd_context.hash(request.form.get("password")), email=request.form.get("emailaddress"))
     return result
 
 def login_authentication():
-    rows = db.execute("SELECT * FROM users WHERE username = :username", username=get_username_field())
-    if len(rows) != 1 or not pwd_context.verify(get_password_field(), rows[0]["hash_password"]):
+    rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+    if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash_password"]):
         return False
     else:
         session["user_id"] = rows[0]["user_ID"]
@@ -94,6 +82,11 @@ def generate():
 def insquote(string):
     string = string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å').replace('&rsquo;', "'").replace('&eacute;', "é").replace('&LDQUO;', "'")
     return string.replace('&RDQUO;', "'").replace('&AMP;', '&')
+
+def title_taken(title):
+    if title in [y for x in [list(x.values()) for x in db.execute("SELECT quiz_title FROM quizzes")] for y in x]:
+        return True
+    return False
 
 def get_timestamp():
 	ts = time.time()

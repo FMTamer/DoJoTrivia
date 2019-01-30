@@ -35,10 +35,10 @@ def index():
 def register():
     if request.method == "POST":
         # Checks if the forms are filled out.
-        if not get_username_field() or not get_password_field() or not get_confirmation_field() or not get_emailaddress_field():
+        if not request.form.get("username") or not request.form.get("password") or not request.form.get("confirmation") or not request.form.get("emailaddress"):
             return apology("Make sure to fill in all fields!")
 
-        elif get_password_field() != get_confirmation_field():
+        elif request.form.get("password") != request.form.get("confirmation"):
             return apology("Passwords do not match!")
 
         # Checks if username or email is already in the database
@@ -78,7 +78,7 @@ def login():
 
     if request.method == "POST":
         # Checks if the forms are filled out.
-        if not get_username_field() or not get_password_field():
+        if not request.form.get("username") or not request.form.get("password"):
             return apology("Make sure to fill in all fields!")
 
         if login_authentication() == False:
@@ -138,9 +138,6 @@ def personal():
     #print(matches)
     return render_template("personal-page.html", username = session['username'])
 
-
-
-
 @app.route("/customquiz", methods = ['GET', 'POST'])
 @login_required
 def customquiz():
@@ -149,7 +146,7 @@ def customquiz():
 
     session['quiz'] = request.form.get("quiztitle")
     if session['quiz']:
-        if session['quiz'] in [y for x in [list(x.values()) for x in db.execute("SELECT quiz_title FROM quizzes")] for y in x]:
+        if title_taken(session['quiz']) == True:
             return apology("That title is already taken")
 
         return redirect(url_for("custom_question"))
@@ -179,12 +176,6 @@ def custom_question():
 
 
     return render_template("custom_question.html", test = [question, cor_answer, w_answer1, w_answer2, w_answer3], test2 = session['quiz'])
-
-
-
-
-
-
 
 
 @app.route("/creategame", methods=["GET", "POST"])
