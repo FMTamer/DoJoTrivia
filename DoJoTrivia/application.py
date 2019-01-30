@@ -407,9 +407,8 @@ def answer():
 def correct_answer():
     # wait for other player
     prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
-    print(db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0].values())
-
-    while db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
+    db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
         wait()
     db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID and completed = 0", room_ID = session['room_ID'])
 
