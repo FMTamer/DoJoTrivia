@@ -15,18 +15,24 @@
     <form action="{{ url_for('custom_question') }}" method="post">
         <fieldset>
             <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control" name="question" placeholder="Question" type="text"/>
+                <input autocomplete="off" autofocus class="form-control questform" name="question" placeholder="Question" type="text"/>
                 <br>
                 <br>
                 <br>
                 <div class='row'>
                     <div class='col-sm'>
-                        <input autocomplete="off" autofocus class="form-control" name="cor_answer" placeholder="Correct answer" type="text"/>
-                        <input autocomplete="off" autofocus class="form-control" name="w_answer1" placeholder="Wrong answer 1" type="text"/>
+                        <label for="cor_answer">Correct answer:</label>
+                        <input id='cor_answer' autocomplete="off" autofocus class="form-control questform" name="cor_answer" placeholder="Correct answer" type="text"/>
+
+                        <label for="w_answer1">Wrong answer #1:</label>
+                        <input id='w_answer1' autocomplete="off" autofocus class="form-control questform" name="w_answer1" placeholder="Wrong answer 1" type="text"/>
                     </div>
                     <div class='col-sm'>
-                        <input autocomplete="off" autofocus class="form-control" name="w_answer2" placeholder="Wrong answer 2" type="text"/>
-                        <input autocomplete="off" autofocus class="form-control" name="w_answer3" placeholder="Wrong answer 3" type="text"/>
+                        <label for="w_answer2">Wrong answer #2:</label>
+                        <input id='w_answer2' autocomplete="off" autofocus class="form-control questform" name="w_answer2" placeholder="Wrong answer 2" type="text"/>
+
+                        <label for="w_answer3">Wrong answer #3:</label>
+                        <input id='w_answer3' autocomplete="off" autofocus class="form-control questform" name="w_answer3" placeholder="Wrong answer 3" type="text"/>
                     </div>
                 </div>
                 <br>

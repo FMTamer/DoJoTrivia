@@ -104,6 +104,9 @@ head
     display: inline-block;
     width: auto;
 }
+ .questform{
+   width: 100%;
+ }
 
 /*Text css*/
 p{text-align:left;
