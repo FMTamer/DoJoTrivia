@@ -84,9 +84,16 @@ def login():
         if not get_username_field() or not get_password_field():
             return apology("Make sure to fill in all fields!")
 
-        if login_authentication() == False:
-            return apology("Invalid username or password!")
+        # query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+        # ensure username exists and password is correct
 
+        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash_password"]):
+            return apology("Invalid username and or password!")
+
+        # remember which user has logged in
+        session["user_id"] = rows[0]["user_ID"]
+        session['username'] = rows[0]['username']
         return redirect(url_for("personal", username = session['username']))
     else:
         return redirect(url_for("/"))
@@ -97,7 +104,7 @@ def logout():
     Log user out.
     """
 
-    # forgets all the sessions
+    # forget any user_id
     session.clear()
 
     # redirect user to login form
@@ -132,18 +139,30 @@ The DoJoTrivia Team"""
 
 
 
-@app.route("/about-us")
+@app.route("/about-us", methods = ['GET', 'POST'])
 def aboutus():
-    return render_template("about-us.html")
+    if request.method == 'GET':
+        return render_template("about-us.html")
+    else:
+        db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < 2:
+            wait()
+        return render_template("results.html", answered = session['room_ID'])
 
 
 @app.route("/personal")
 @login_required
 def personal():
+
     players = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE completed == 1 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session["user_id"])
     for x in players:
         if session["user_id"] == x['player_ID1'] or x['player_ID2']:
             return render_template("personal-page.html", username = session['username'])
+
+    #matches = db.execute("SELECT username FROM users WHERE user_ID = :player_ID", player_ID = ("Select from game")
+    #print(matches)
+    return render_template("personal-page.html", username = session['username'])
+
 
 
 
@@ -168,7 +187,7 @@ def customquiz():
 @login_required
 def custom_question():
     if request.method ==  'GET':
-        return render_template("custom_question.html", test = 1, test2 = session['quiz'])
+        return render_template("custom_question.html", title = session['quiz'])
 
     # get question and answers
     quiz_title = session['quiz']
@@ -288,7 +307,7 @@ def creategame():
 def joingame():
     if request.method == "GET":
         # check if player is already in game
-        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session["user_id"])
+        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
         rows = ''
         if len(rows) == 0:
             return render_template("joining.html")
@@ -302,7 +321,7 @@ def joingame():
             # update database
             room_ID = session['room_ID']
             session['question_number'] = 0
-            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = session["user_id"], room = session['room_ID'])
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = session['room_ID'])
 
 
             # get question and answers from database
@@ -335,9 +354,12 @@ def joingame():
 @login_required
 def ending_game():
     time_stamp = get_timestamp()
-    user_ID = session["user_id"]
-    room = session['room_ID']
+    user_ID = get_userID()
+    room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
+            userID = user_ID)
+    room = room[0]['game_room']
 
+<<<<<<< HEAD
     wait()
     scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
     score_P1 = scores[0]['score_P1']
@@ -345,9 +367,14 @@ def ending_game():
     score_P1 = int(score_P1)
     score_P2 = int(score_P2)
     print(type(score_P1))
+=======
+    scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE (completed == 0 and game_room == :room)")
+    score_P1 = scores[0]['score_P1']
+    score_P2 = scores[0]['score_P2']
+>>>>>>> e05d1b0ac2d671d2d1e1fba34f8fd376302fdcd6
 
     if score_P1 > score_P2:
-        playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room", room = room)
+        playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
         winnerID = playersID[0]['player_ID1']
         other_player = playersID[0]['player_ID2']
 
@@ -357,10 +384,9 @@ def ending_game():
 
         player2 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
         player2 = player2[0]['username']
-
     elif score_P1 < score_P2:
-        playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room", room = room)
-        winnerID = playersID[0]['player_ID2']
+        winnerID = db.execute("SELECT player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
+        winnerID = winnerID[0]['player_ID2']
         other_player = playersID[0]['player_ID1']
 
         winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
@@ -368,15 +394,17 @@ def ending_game():
         player2 = winner
 
         player1 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
-        player1 = player1[0]['username']
+        player1 = player2[0]['username']
     else:
         db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
             score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
-        return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Draw")
+        return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Gelijkspel!")
 
     db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
         score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
-    return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner, username1 = player1 , username2 = player2)
+
+    return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner)
+
 
 
 
@@ -390,21 +418,27 @@ def answer():
 @app.route('/quizC', methods=['GET', 'POST'])
 def correct_answer():
     # wait for other player
-    prev_answered = db.execute("SELECT total_answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
-    db.execute("UPDATE game SET answered = answered + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
-    p_answered = db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
-    while db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
+    prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
+
+    if db.execute("SELECT player_ID1 FROM game WHERE completed = 0  and game_room = :room_ID", room_ID = session['room_ID']) == session['user_id']:
+        db.execute("UPDATE game SET p1_answered = p1_answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    else:
+        db.execute("UPDATE game SET p2_answered = p2_answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+
+    print(db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0].values())
+
+    while db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
         wait()
-    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID", room_ID = session['room_ID'])
+    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID and completed = 0", room_ID = session['room_ID'])
 
 
     # update right scores
-    if db.execute("SELECT player_ID1 FROM game WHERE game_room = :room_ID" , room_ID = session["room_ID"])[0]['player_ID1'] == session['user_id']:
-        db.execute("UPDATE game SET score_P1 = score_P1 + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
+    if db.execute("SELECT player_ID1 FROM game WHERE game_room = :room_ID and completed = 0" , room_ID = session["room_ID"])[0]['player_ID1'] == session['user_id']:
+        db.execute("UPDATE game SET score_P1 = score_P1 + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
         print('poep')
-    elif db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id']:
-        print(db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id'])
-        db.execute("UPDATE game SET score_P2 = score_P2 + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
+    elif db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID and completed = 0" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id']:
+        print(db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID and completed = 0" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id'])
+        db.execute("UPDATE game SET score_P2 = score_P2 + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
         print('kech')
 
     # check if questions are left
@@ -433,17 +467,18 @@ def correct_answer():
 
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
+    # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
     return redirect(url_for("ending_game"))
 
 @app.route('/quizW', methods=['GET', 'POST'])
 def wrong_answer():
     # wait for other player
-    prev_answered = db.execute("SELECT total_answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
-    db.execute("UPDATE game SET answered = answered + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
-    p_answered = db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
-    while db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
+    prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
+    db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    p_answered = db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
+    while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
         wait()
-    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID", room_ID = session['room_ID'])
+    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID and completed = 0", room_ID = session['room_ID'])
 
 
     session['question_number'] += 1
@@ -471,13 +506,14 @@ def wrong_answer():
 
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
-    return redirect(url_for("ending_game"))
+    # EY BITCH HIER MOET DE CODE VOOR NAAR HET SCOREBOARD
+    return render_template('results.html')
 
 @app.route("/retreat", methods=['POST'])
 @login_required
 def retreat():
     time_stamp = get_timestamp()
-    user_ID = session["user_id"]
+    user_ID = get_userID()
     room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
             userID = user_ID)
     room = room[0]['game_room']

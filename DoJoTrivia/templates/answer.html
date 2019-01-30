@@ -21,27 +21,25 @@
     <br>
     <br>
     <br>
-    <table class='table' id='maincon'>
-        <tr>
-            <th scope="row"></th>
-            <td><button class="btn btn-primary answer w-100 btn-outline-success" id ='answer0'>{{ answer0 }}</button></td>
-            <td><button class="btn btn-primary answer w-100 btn-outline-success" id='answer1'>{{ answer1 }}</button></button></td>
+    <table class='w-100' id='maincon'>
+        <tr style='width: auto'>
+            <td><button class="btn btn-primary answer w-100" id ='answer0'>{{ answer0 }}</button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer1'>{{ answer1 }}</button></button></td>
         </tr>
         <tr>
-            <th scope="row"></th>
-            <td><button class="btn btn-primary answer w-100 btn-outline-success" id='answer2'>{{ answer2 }}</button></td>
-            <td><button class="btn btn-primary answer w-100 btn-outline-success" id='answer3'>{{ answer3 }}</button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer2'>{{ answer2 }}</button></td>
+            <td><button class="btn btn-primary answer w-100" id='answer3'>{{ answer3 }}</button></td>
         </tr>
     </table>
 
     <div id='wronghidden' style='display: none'>
         <form action="{{ url_for('wrong_answer') }}" method="post">
-            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();'>WRONG! Next question</button>
+            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>
     <div id='corhidden' style='display: none'>
         <form action="{{ url_for('correct_answer') }}" method="post">
-            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();'>CORRECT! Next question</button>
+            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg()'> Next question</button>
         </form>
     </div>
 
@@ -50,7 +48,7 @@
         <fieldset>
             <br>
             <div class="form-group">
-                <button class="btn btn-danger" type="submit">Give Up :(</button>
+                <button class="btn btn-danger" type="submit">Give Up</button>
             </div>
         </fieldset>
     </form>
@@ -113,6 +111,12 @@
             function waitmsg(){
                 document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Waiting for players</strong>';
             }
+
+            $( ".next" ).click(function() {
+                  $( ".next" ).slideUp( 0, function() {
+                    // Animation complete.
+                  });
+                });
 
 
 

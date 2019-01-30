@@ -10,6 +10,7 @@
         <h1><strong>Create a custom Quiz</strong></h1>
     </head>
     <hr class="line_title">
+    <strong class='h1'>{{ title }}</strong>
     <br>
     <form action="{{ url_for('custom_question') }}" method="post">
         <fieldset>
@@ -36,15 +37,4 @@
     <form action="{{ url_for('personal') }}" name="joining" method="get">
                 <button class="btn btn-primary btn-outline-danger btn-lg" type="submit">Done</button>
     </form>
-    <br>
-    <br>
-    <p>
-        <br>
-        <br>
-        {{ test }}
-        <br>
-        <br>
-        {{ test2 }}
-
-    </p>
 {% endblock %}
