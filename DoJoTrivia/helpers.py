@@ -71,6 +71,9 @@ def login_authentication():
 def check_room():
     return db.execute("SELECT game_room FROM game")
 
+def empty_room(room_ID):
+    return db.execute("SELECT game_room FROM game WHERE completed == 0 and game_room == :room_ID", room_ID = room_ID)
+
 def generate():
     """
     <wat doet deze functie>

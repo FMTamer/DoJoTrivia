@@ -290,34 +290,33 @@ def joingame():
 
     else:
         # check if room number exits and assign to session
-        session['room_ID'] = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))]
-        if session['room_ID']:
-            # update database
-            room_ID = session['room_ID']
-            session['question_number'] = 0
-            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = session["user_id"], room = session['room_ID'])
+        if not empty_room(int(request.form.get("room_num"))):
+            return apology("This room number is invalid!")
+        session['room_ID'] = int(request.form.get("room_num"))
+        room_ID = session['room_ID']
+
+        session['question_number'] = 0
+        db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = session["user_id"], room = session['room_ID'])
 
 
-            # get question and answers from database
-            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
-            question = quiz['question']
-            wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
-            cor_answer = quiz['cor_answer']
+        # get question and answers from database
+        quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
+        question = quiz['question']
+        wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+        cor_answer = quiz['cor_answer']
 
-            # scramble answers
-            tempanswers = wrong_answers
-            tempanswers.append(cor_answer)
-            rempos = list(range(0, 4))
-            answers = {}
-            while rempos:
-                x = random.choice(rempos)
-                answers[x] = random.choice(tempanswers)
-                rempos.remove(x)
-                tempanswers.remove(answers[x])
+        # scramble answers
+        tempanswers = wrong_answers
+        tempanswers.append(cor_answer)
+        rempos = list(range(0, 4))
+        answers = {}
+        while rempos:
+            x = random.choice(rempos)
+            answers[x] = random.choice(tempanswers)
+            rempos.remove(x)
+            tempanswers.remove(answers[x])
 
-            return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
-        else:
-            return apology("This room number does not exist")
+        return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
 # @app.route("/makeq")
 # @login_required
@@ -361,10 +360,10 @@ def ending_game():
         player1 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
         player1 = player1[0]['username']
     else:
-        db.execute("UPDATE game SET won_by = player_ID2, completed = :completed WHERE game_room = :room", completed = 1, room = room)
+        db.execute("UPDATE game SET won_by = :winner, completed = :completed WHERE game_room = :room", winner = 'Draw', completed = 1, room = room)
         return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Draw")
 
-    db.execute("UPDATE game SET won_by = winner , completed = :completed WHERE game_room = :room", completed = 1, room = room)
+    db.execute("UPDATE game SET won_by = :winner , completed = :completed WHERE game_room = :room", winner = winner, completed = 1, room = room)
     return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner, username1 = player1 , username2 = player2)
 
 
