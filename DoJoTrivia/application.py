@@ -49,23 +49,23 @@ def register():
             return apology("Invalid username and/or password!")
 
 
-        port = 587
-        smtp_server = "smtp.gmail.com"
-        sender_email = "dojopython.webik@gmail.com"
-        receiver_email = request.form.get("emailaddress")
-        password = "webik2019_"
-        message = """\
-Subject: Welcome to DoJoTrivia!
-Welcome new player,
-Thank you for registering, we at DoJoTrivia hope you have a great time testing your knowledge and challenging your friends!
-Sincerely,
-The DoJoTrivia Team"""
+#         port = 587
+#         smtp_server = "smtp.gmail.com"
+#         sender_email = "dojopython.webik@gmail.com"
+#         receiver_email = request.form.get("emailaddress")
+#         password = "webik2019_"
+#         message = """\
+# Subject: Welcome to DoJoTrivia!
+# Welcome new player,
+# Thank you for registering, we at DoJoTrivia hope you have a great time testing your knowledge and challenging your friends!
+# Sincerely,
+# The DoJoTrivia Team"""
 
-        context = ssl.create_default_context()
-        with smtplib.SMTP(smtp_server, port) as server:
-            server.starttls(context=context)
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message)
+#         context = ssl.create_default_context()
+#         with smtplib.SMTP(smtp_server, port) as server:
+#             server.starttls(context=context)
+#             server.login(sender_email, password)
+#             server.sendmail(sender_email, receiver_email, message)
 
         return redirect(url_for("personal"))
     else:
@@ -130,13 +130,48 @@ The DoJoTrivia Team"""
 def aboutus():
     return render_template("about-us.html")
 
-
 @app.route("/personal")
 @login_required
 def personal():
-    #old_matches = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session)
-    #print(matches)
+    # create match history
+    match_history = db.execute("SELECT player_ID1, player_ID2, time, won_by FROM game WHERE completed == 1 AND (player_ID1 == :user_ID or player_ID2 == :user_ID) ORDER BY time DESC", user_ID = session['user_id'])
+    if match_history:
+        matchlist = [x for x in match_history if x['player_ID2'] != 'NULL' and x['player_ID1'] != x['player_ID2']]
+        match_history = []
+        for x in matchlist:
+            appendage = {}
+            appendage['time'] = x['time'][5:-3]
+            if x['player_ID1'] == session['user_id']:
+                appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID2'])[0]['username']
+            else:
+                appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID1'])[0]['username']
+            if x['won_by'] == session['user_id']:
+                appendage['win'] = 'Won'
+            elif x['won_by'] == x['player_ID2']:
+                appendage['win'] = 'Lost'
+            else:
+                appendage['win'] = 'Draw'
+            match_history.append(appendage)
+    elif not match_history:
+        match_history = ['', '', '', '']
+    print(match_history)
+
+    # get wins, losses and ratio
+    wlr = [len(db.execute("SELECT player_ID1 from game WHERE won_by = :user_ID", user_ID = session['user_id'])),
+        len(db.execute("SELECT player_ID1 from game WHERE won_by != :user_ID AND won_by != 'draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id'])),
+        len(db.execute("SELECT player_ID1 from game WHERE won_by != :user_ID AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id']))]
+    print(wlr)
+    if wlr[1] == 0:
+        wlr.append(wlr[0]/1)
+    else:
+        wlr.append(wlr[0]/wlr[1])
+
+    if wlr and match_history:
+        return render_template("personal-page.html", username = session['username'], match_history = match_history, wlr = wlr)
+    print('not sessions')
+    wlr = [0, 0, 0]
     return render_template("personal-page.html", username = session['username'])
+
 
 @app.route("/customquiz", methods = ['GET', 'POST'])
 @login_required
