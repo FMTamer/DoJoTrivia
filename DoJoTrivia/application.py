@@ -494,7 +494,7 @@ def wrong_answer():
 @login_required
 def retreat():
     time_stamp = get_timestamp()
-    user_ID = session['user_ID']
+    user_ID = session['user_id']
     room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
             userID = user_ID)
     room = room[0]['game_room']
