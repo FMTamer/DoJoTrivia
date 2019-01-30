@@ -156,9 +156,9 @@ def personal():
     match_history += ['', '', '', '']
 
     # get wins, losses and ratio
-    wlr = [len(db.execute("SELECT player_ID1 from game WHERE won_by = :user_ID", user_ID = session['user_id'])),
-        len(db.execute("SELECT player_ID1 from game WHERE won_by != :user_ID AND won_by != 'draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id'])),
-        len(db.execute("SELECT player_ID1 from game WHERE won_by != :user_ID AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id']))]
+    wlr = [len(db.execute("SELECT player_ID1 from game WHERE won_by = :username", username = session['username'])),
+        len(db.execute("SELECT player_ID1 from game WHERE won_by != :username AND won_by != 'Draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", username = session['username'], user_ID = session['user_id'])),
+        len(db.execute("SELECT player_ID1 from game WHERE won_by = 'Draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id']))]
     print(wlr)
     if wlr[1] == 0:
         wlr.append(wlr[0]/1)
@@ -353,7 +353,7 @@ def joingame():
 def ending_game():
     user_ID = session["user_id"]
     room = session['room_ID']
-
+    wait()
     game_info = db.execute("SELECT time, score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
     time_stamp = game_info[0]['time']
     score_P1 = game_info[0]['score_P1']
