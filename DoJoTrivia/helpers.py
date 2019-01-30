@@ -99,3 +99,6 @@ def get_timestamp():
 def wait():
     sleep(2)
 
+def get_userID():
+    return session['user_id']
+

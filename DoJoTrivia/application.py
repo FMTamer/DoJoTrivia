@@ -303,7 +303,7 @@ def creategame():
 def joingame():
     if request.method == "GET":
         # check if player is already in game
-        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session['user_id'])
         rows = ''
         if len(rows) == 0:
             return render_template("joining.html")
@@ -317,7 +317,7 @@ def joingame():
             # update database
             room_ID = session['room_ID']
             session['question_number'] = 0
-            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = session['room_ID'])
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = session['user_id'], room = session['room_ID'])
 
 
             # get question and answers from database
@@ -359,6 +359,7 @@ def ending_game():
     scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
     score_P1 = scores[0]['score_P1']
     score_P2 = scores[0]['score_P2']
+
 
     if score_P1 > score_P2:
         playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
@@ -500,7 +501,7 @@ def wrong_answer():
 @login_required
 def retreat():
     time_stamp = get_timestamp()
-    user_ID = get_userID()
+    user_ID = session['user_ID']
     room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
             userID = user_ID)
     room = room[0]['game_room']
