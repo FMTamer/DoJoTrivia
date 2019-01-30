@@ -384,7 +384,7 @@ def ending_game():
     else:
         db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
             score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
-        return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Gelijkspel!")
+        return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Draw")
 
     db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
         score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
