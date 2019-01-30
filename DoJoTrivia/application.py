@@ -122,7 +122,7 @@ The DoJoTrivia Team"""
             server.starttls(context=context)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message)
-        return apology("Thanks for the feedback!")
+        return render_template("contacted.html")
 
 
 
