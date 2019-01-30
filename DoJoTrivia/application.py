@@ -407,12 +407,6 @@ def answer():
 def correct_answer():
     # wait for other player
     prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
-
-    if db.execute("SELECT player_ID1 FROM game WHERE completed = 0  and game_room = :room_ID", room_ID = session['room_ID']) == session['user_id']:
-        db.execute("UPDATE game SET p1_answered = p1_answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-    else:
-        db.execute("UPDATE game SET p2_answered = p2_answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-
     print(db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0].values())
 
     while db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
