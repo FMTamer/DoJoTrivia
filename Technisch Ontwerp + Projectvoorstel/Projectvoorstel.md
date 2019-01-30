@@ -6,7 +6,7 @@ Voor ons project gaan we een webapplicatie, genaamd DoJoTrivia, bouwen waarmee m
 ## Features
 - Registratie en login
 - Quizzes
-- Multiplayer(1 tegen 1)
+- Multiplayer (1 tegen 1)
 - Scoreboard met de resultaten aan het eind van een game
 - Contactpagina (voor het rapporteren van bugs, geven van suggesties, etc.)
 - Mail ter bevestiging van verwerking van registratie en feedback
@@ -24,10 +24,12 @@ Voor ons project gaan we een webapplicatie, genaamd DoJoTrivia, bouwen waarmee m
 - Flask
 - Flask-Mail
 - Flask-User
+- SMTPlib
+- SQLite3
 
 ### Concurrerende  websites
 - Socrative (https://b.socrative.com/login/student/). Met socrative kunnen docenten gemakkelijk hun eigen quizzes maken.
-- Kahoot ([https://kahoot.it/](https://kahoot.it/ "https://kahoot.it/"). Kahoot heeft een zeer simpel en kleurrijk design.
+- Kahoot (https://kahoot.it/). Kahoot heeft een zeer simpel en kleurrijk design.
 
 ### Moeilijkheden
 - Multiplayer implementeren

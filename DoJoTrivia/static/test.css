@@ -17,6 +17,10 @@ head
     text-align: center;
 }
 
+ul {
+  list-style-type: none;
+}
+
 /* The sidebar menu */
 .sidebar {
   height: 100%; /* 100% Full-height */
