@@ -118,7 +118,7 @@ p{text-align:left;
 .answer{
   font-size: 2rem;
   height: 100%;
-
+  margin-bottom: 1px;
 }
 
 .waitmsg:

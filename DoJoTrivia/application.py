@@ -143,25 +143,43 @@ The DoJoTrivia Team"""
 def aboutus():
     if request.method == 'GET':
         return render_template("about-us.html")
-    else:
-        db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < 2:
-            wait()
-        return render_template("results.html", answered = session['room_ID'])
 
 
 @app.route("/personal")
 @login_required
 def personal():
 
-    players = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE completed == 1 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session["user_id"])
-    for x in players:
-        if session["user_id"] == x['player_ID1'] or x['player_ID2']:
-            return render_template("personal-page.html", username = session['username'])
+    # create match history
+    match_history = db.execute("SELECT player_ID1, player_ID2, time, won_by FROM game WHERE completed == 1 AND (player_ID1 == :user_ID or player_ID2 == :user_ID) ORDER BY time DESC", user_ID = session['user_id'])
+    if match_history:
+        matchlist = [x for x in match_history if x['player_ID2'] != 'NULL' and x['player_ID1'] != x['player_ID2']]
+        match_history = []
+        for x in matchlist:
+            appendage = {}
+            appendage['time'] = x['time'][5:-3]
+            if x['player_ID1'] == session['user_id']:
+                appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID2'])[0]['username']
+            else:
+                appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID1'])[0]['username']
+            if x['won_by'] == session['user_id']:
+                appendage['win'] = 'Won'
+            elif x['won_by'] == x['player_ID2']:
+                appendage['win'] = 'Lost'
+            else:
+                appendage['win'] = 'Draw'
+            match_history.append(appendage)
 
-    #matches = db.execute("SELECT username FROM users WHERE user_ID = :player_ID", player_ID = ("Select from game")
-    #print(matches)
-    return render_template("personal-page.html", username = session['username'])
+    # get wins, losses and ratio
+    wlr = [len(db.execute("SELECT player_ID1 from game WHERE won_by = :user_ID", user_ID = session['user_id'])),
+        len(db.execute("SELECT player_ID1 from game WHERE won_by != :user_ID AND won_by != 'draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id'])),
+        len(db.execute("SELECT player_ID1 from game WHERE won_by != :user_ID AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = session['user_id']))]
+    if wlr[1] == 0:
+        wlr.append(wlr[0]/1)
+    else:
+        wlr.append(wlr[0]/[1])
+
+    return render_template("personal-page.html", username = session['username'], match_history = match_history, wlr = wlr)
+
 
 @app.route("/customquiz", methods = ['GET', 'POST'])
 @login_required

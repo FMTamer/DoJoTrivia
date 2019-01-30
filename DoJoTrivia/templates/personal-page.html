@@ -44,22 +44,36 @@
 
     <h3><strong>Match History</strong></h3>
     <hr>
-    <table style="width:100%">
-        <tr>
-            <td style="text-align:left"><h4>Game1</h4></td>
-            <td style="text-align:right"><h4>UserPlayedAgainst</h4></td>
+    <table class="table table-fit" style='100%'>
+        <tr class='h1'>
+            <th>#</th>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Result</th>
         </tr>
         <tr>
-            <td style="text-align:left"><h4>Game2</h4></td>
-            <td style="text-align:right"><h4>UserPlayedAgainst</h4></td>
+            <td>1. </td>
+            <td>{{ match_history[0]['time'] }}</td>
+            <td>{{ match_history[0]['opponent'] }}</td>
+            <td>{{ match_history[0]['win']  }}</td>
         </tr>
         <tr>
-            <td style="text-align:left"><h4>Game3</h4></td>
-            <td style="text-align:right"><h4>UserPlayedAgainst</h4></td>
+            <td>2. </td>
+            <td>{{ match_history[1]['time'] }}</td>
+            <td>{{ match_history[1]['opponent'] }}</td>
+            <td>{{ match_history[1]['win']  }}</td>
         </tr>
         <tr>
-            <td style="text-align:left"><h4>Game4</h4></td>
-            <td style="text-align:right"><h4>UserPlayedAgainst</h4></td>
+            <td>3. </td>
+            <td>{{ match_history[2]['time'] }}</td>
+            <td>{{ match_history[2]['opponent'] }}</td>
+            <td>{{ match_history[2]['win']  }}</td>
+        </tr>
+        <tr>
+            <td>4. </td>
+            <td>{{ match_history[3]['time'] }}</td>
+            <td>{{ match_history[3]['opponent'] }}</td>
+            <td>{{ match_history[3]['win']  }}</td>
         </tr>
     </table>
     <br>
@@ -70,16 +84,20 @@
     <table style="width:100%">
         <tr>
             <td style="text-align:left"><h4>Wins</h4></td>
-            <td style="text-align:right"><h4>Amount</h4></td>
+            <td style="text-align:right"><h4>{{ wlr[0] }}</h4></td>
         </tr>
         <tr>
             <td style="text-align:left"><h4>Losses</h4></strong></td>
-            <td style="text-align:right"><h4>Amount</h4></td>
+            <td style="text-align:right"><h4>{{ wlr[1] }}</h4></td>
+        </tr>
+        <tr>
+            <td style="text-align:left"><h4>Draws</h4></strong></td>
+            <td style="text-align:right"><h4>{{ wlr[2] }}</h4></td>
         </tr>
     </table>
     <br>
     <br>
     <br>
     <br>
-    <h1 style="text-align:center">Win/Loss Ratio: <i>ratio</i></h1>
+    <h1 style="text-align:center">Win/Loss Ratio: <i>{{ wlr[3] }}</i></h1>
 {% endblock %}
