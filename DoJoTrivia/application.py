@@ -107,6 +107,7 @@ def customquiz():
     if request.method == 'GET':
         return render_template("customquiz_title.html")
 
+    # validate given quiztitle
     session['quiz'] = request.form.get("quiztitle")
     if session['quiz']:
         if title_taken(session['quiz']) == True:
@@ -133,10 +134,7 @@ def custom_question():
     if not any([question, cor_answer, w_answer1, w_answer2, w_answer3]):
         return apology("Please fill in all fields")
 
-    # insert question into database
-    db.execute("INSERT INTO quizzes (quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer3) VALUES (:quiz_title, :question, :cor_answer, :w_answer1, :w_answer2, :w_answer3)",
-    quiz_title = quiz_title, question = question, cor_answer = cor_answer, w_answer1 = w_answer1, w_answer2 = w_answer2, w_answer3 = w_answer3)
-
+    insert_quiz(quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer3)
 
     return render_template("custom_question.html", test = [question, cor_answer, w_answer1, w_answer2, w_answer3], test2 = session['quiz'])
 
