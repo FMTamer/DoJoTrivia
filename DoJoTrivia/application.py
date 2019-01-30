@@ -290,7 +290,7 @@ def joingame():
 
     else:
         # check if room number exits and assign to session
-        session['room_ID'] = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))][0]
+        session['room_ID'] = [x for x in [a['game_room'] for a in check_room()] if x == int(request.form.get("room_num"))]
         if session['room_ID']:
             # update database
             room_ID = session['room_ID']
@@ -327,17 +327,15 @@ def joingame():
 @app.route("/results")
 @login_required
 def ending_game():
-    time_stamp = get_timestamp()
     user_ID = session["user_id"]
     room = session['room_ID']
 
-    scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
-    score_P1 = scores[0]['score_P1']
-    score_P2 = scores[0]['score_P2']
-    print(type(score_P1))
+    game_info = db.execute("SELECT time, score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
+    time_stamp = game_info[0]['time']
+    score_P1 = game_info[0]['score_P1']
+    score_P2 = game_info[0]['score_P2']
     score_P1 = int(score_P1)
     score_P2 = int(score_P2)
-    print(type(score_P1))
 
     if score_P1 > score_P2:
         playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room", room = room)
@@ -363,12 +361,10 @@ def ending_game():
         player1 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
         player1 = player1[0]['username']
     else:
-        db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
-            score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
+        db.execute("UPDATE game SET won_by = player_ID2, completed = :completed WHERE game_room = :room", completed = 1, room = room)
         return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Draw")
 
-    db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
-        score1 = score_P1, score2 = score_P2, time_stamp = time_stamp, completed = 1, room = room)
+    db.execute("UPDATE game SET won_by = winner , completed = :completed WHERE game_room = :room", completed = 1, room = room)
     return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner, username1 = player1 , username2 = player2)
 
 
@@ -426,6 +422,8 @@ def correct_answer():
 
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
+    time_stamp = get_timestamp()
+    db.execute("UPDATE game SET time = :time_stamp", time_stamp = time_stamp)
     return redirect(url_for("ending_game"))
 
 @app.route('/quizW', methods=['GET', 'POST'])
@@ -464,6 +462,8 @@ def wrong_answer():
 
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
+    time_stamp = get_timestamp()
+    db.execute("UPDATE game SET time = :time_stamp", time_stamp = time_stamp)
     return redirect(url_for("ending_game"))
 
 @app.route("/retreat", methods=['POST'])
