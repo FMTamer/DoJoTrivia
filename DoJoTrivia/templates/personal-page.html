@@ -12,7 +12,7 @@
     <hr class="line_title">
     <br>
     <p class="text-center">
-        Here you can create or join a game. Keep in mind that you can only be active in 1 game at a time!
+        Here you can create, join a game or make your own custom quiz for the community. Keep in mind that you can only be active in 1 game at a time!
         You can also easily check your match history to see how well you did!
         A little lower, you can see your DoJoTrivia statistics.
     </p>
@@ -30,6 +30,14 @@
             <form action="{{ url_for('joingame') }}" name="joining" method="get">
                 <button class="btn btn-primary btn-outline-danger btn-lg" type="submit">Join Game</button>
             </form>
+        </div>
+    </div>
+    <br>
+    <div class='row'>
+        <div class='col-sm'>
+        <form action="{{ url_for('customquiz') }}" name="creating" method="get">
+            <button class="btn btn-primary btn-outline-danger btn-lg" type="submit">Create Your Quiz!</button>
+        </form>
         </div>
     </div>
     <br>

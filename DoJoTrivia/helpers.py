@@ -68,9 +68,6 @@ def login_authentication():
         session['username'] = rows[0]['username']
         return True
 
-def get_userID():
-    return session["user_id"]
-
 def check_room():
     return db.execute("SELECT game_room FROM game")
 

@@ -13,9 +13,8 @@
     </hr>
     <table style="width:100%">
         <tr>
-            <td style="text-align:left"><h2 id="winner"> </h2></td>
+            <td style="text-align:left" ><h2 id="winner"> </h2></td>
             <td style="text-align:left"><h2 id="draw"> </h2></td>
-            <p id="test"></p>
         </tr>
         <br>
         <br>
@@ -34,24 +33,19 @@
     <h3><strong>{{ time }}</strong></h3>
     <hr class="line_title">
     <br>
-    <input value="press" type="button" onclick="myclick()">
-{% endblock %}
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-    function myclick(){
-    alert("myclick")
-    }
 
     var user_won = String('{{ winner }}');
-    function winner_check(){
+    window.onload = function(){
         if( user_won == "Draw"){
-            document.getElementById("test").innerHTML="KANKERdraw";
             document.getElementById("draw").innerHTML="Game Ended in a draw!";
         }
         else{
-            document.getElementById("winner").innerHTML="Congratulations" + user_won + "for winning the game!";
+            document.getElementById("winner").innerHTML="Congratulations " + user_won + " for winning the game!";
         }
     }
-    document.getElementById("test").innerHTML="KANKERwin";
 </script>
+
+{% endblock %}
