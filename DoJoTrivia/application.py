@@ -48,24 +48,8 @@ def register():
         if login_authentication() == False:
             return apology("Invalid username and/or password!")
 
+        # send_register_mail(request.form.get("emailaddress"))
 
-#         port = 587
-#         smtp_server = "smtp.gmail.com"
-#         sender_email = "dojopython.webik@gmail.com"
-#         receiver_email = request.form.get("emailaddress")
-#         password = "webik2019_"
-#         message = """\
-# Subject: Welcome to DoJoTrivia!
-# Welcome new player,
-# Thank you for registering, we at DoJoTrivia hope you have a great time testing your knowledge and challenging your friends!
-# Sincerely,
-# The DoJoTrivia Team"""
-
-#         context = ssl.create_default_context()
-#         with smtplib.SMTP(smtp_server, port) as server:
-#             server.starttls(context=context)
-#             server.login(sender_email, password)
-#             server.sendmail(sender_email, receiver_email, message)
 
         return redirect(url_for("personal"))
     else:

@@ -95,5 +95,25 @@ def get_timestamp():
 def wait():
     sleep(2)
 
+def send_register_mail(email):
+    """
+    Sends email to newly registered user
+    """
+    port = 587
+    smtp_server = "smtp.gmail.com"
+    sender_email = "dojopython.webik@gmail.com"
+    receiver_email = email
+    password = "webik2019_"
+    message = """\
+Subject: Welcome to DoJoTrivia!
+Welcome new player,
+Thank you for registering, we at DoJoTrivia hope you have a great time testing your knowledge and challenging your friends!
+Sincerely,
+The DoJoTrivia Team"""
 
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.starttls(context=context)
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
 
