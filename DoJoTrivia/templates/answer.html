@@ -34,12 +34,12 @@
 
     <div id='wronghidden' style='display: none'>
         <form action="{{ url_for('wrong_answer') }}" method="post">
-            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();'>WRONG! Next question</button>
+            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg()'>Next question</button>
         </form>
     </div>
     <div id='corhidden' style='display: none'>
         <form action="{{ url_for('correct_answer') }}" method="post">
-            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg();'>CORRECT! Next question</button>
+            <button class="btn btn-primary btn-lg next" type="submit" onclick='waitmsg()'> Next question</button>
         </form>
     </div>
 
@@ -112,6 +112,17 @@
                 document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Waiting for players</strong>';
             }
 
+            $( "#corhidden" ).click(function() {
+                  $( "#book" ).slideUp( "slow", function() {
+                    // Animation complete.
+                  });
+                });
+
+            $( "#wronghidden" ).click(function() {
+                  $( "#book" ).slideUp( "slow", function() {
+                    // Animation complete.
+                  });
+                });
 
 
 
