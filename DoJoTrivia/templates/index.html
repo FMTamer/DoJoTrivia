@@ -8,47 +8,68 @@
 
 <div class="container">
 
-    <br>
-    <head>
-        <h1><strong>DoJoTrivia</strong></h1>
-    </head>
+      <header class="jumbotron my-4">
+        <h1 class="display-3">DoJoTrivia</h1>
+        <p class="lead">Test your knowledge and challenge your friends in this real-time multiplayer trivia game! We offer everything
+        that fits your perfect trivia experience. You can for example think of your own personal page with your most recent matches and interesting statistics showed or
+        creating your very own quiz, which is playable for everyone in the community!</p>
+        <form action="{{ url_for('register') }}" name="registering" method="get">
+            <br>
+            <div class="form-group">
+                <button class="btn btn-warning btn-lg" type="submit">Register Now!</button>
+            </div>
+        </form>
+      </header>
+
+    <h3>Features + In-Game Screenshots:</h3>
     <hr class="line_title">
     <br>
-    <br>
-    <p>Test your knowledge and challenge your friends!</p>
-    <h3 class="my-3">Features:</h3>
-    <ul>
-        <li>Trivia Questions!</li>
-        <li>1v1 Realtime Multiplayer </li>
-        <li>Check your Match History and Stats!</li>
-        <li>Create your own quizzes!</li>
-    </ul>
-    <form action="{{ url_for('register') }}" name="registering" method="get">
-    <br>
-        <div class="form-group">
-            <button class="btn btn-warning btn-lg" type="submit">Register Now!</button>
-        </div>
-    </form>
-      <h3 class="my-4">In-Game Screenshots:</h3>
+      <div class="row text-center">
 
-      <div class="row">
-        <div class="col-md-4 col-sm-6 mb-4">
-            <img class="img-fluid" src="static/Screen1.png" alt="" style="width: auto; height: auto;">
-        </div>
-
-        <div class="col-md-4 col-sm-6 mb-4">
-            <img class="img-fluid" src="static/Screen2.png" alt="" style="width: auto; height: auto;">
-        </div>
-        <div class="col-md-4 col-sm-6 mb-4">
+        <div class="col-lg-3 col-lg-6 mb-4">
+          <div class="card">
             <img class="img-fluid" src="static/Screen3.png" alt="" style="width: auto; height: auto;">
+            <div class="card-body">
+              <h4 class="card-title">Trivia Questions!</h4>
+              <p class="card-text">Test your knowledge by answering the randomized trivia questions in an amazing game environment.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="col-md-4 col-sm-6 mb-4">
+        <div class="col-lg-3 col-lg-6 mb-4">
+          <div class="card">
+            <img class="img-fluid" src="static/Screen2.png" alt="" style="width: auto; height: auto;">
+            <div class="card-body">
+              <h4 class="card-title">1v1 Realtime Multiplayer!</h4>
+              <p class="card-text">Play an exciting 1 versus 1 match against your friend or a stranger.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-lg-6 mb-4">
+          <div class="card">
+            <img class="img-fluid" src="static/Screen1.png" alt="" style="width: auto; height: auto;">
+            <div class="card-body">
+              <h4 class="card-title">History and Stats!</h4>
+              <p class="card-text">Always check your latest statistic and most recent matches to see how well you did.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-lg-6 mb-4">
+          <div class="card">
             <img class="img-fluid" src="static/Screen4.png" alt="" style="width: auto; height: auto;">
+            <div class="card-body">
+              <h4 class="card-title">Custom Quizes!</h4>
+              <p class="card-text">Got tired of randomized questions? Why not create your own fully customized quiz inside your personal page.</p>
+            </div>
+          </div>
         </div>
 
       </div>
+
     </div>
-  </body>
+
+
 {% endblock %}
 
