@@ -321,6 +321,7 @@ def joingame():
 
 
             # get question and answers from database
+            quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
             question = quiz['question']
             wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
             cor_answer = quiz['cor_answer']
@@ -406,6 +407,14 @@ def answer():
 def correct_answer():
     # wait for other player
     prev_answered = db.execute("SELECT total_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
+
+    if db.execute("SELECT player_ID1 FROM game WHERE completed = 0  and game_room = :room_ID", room_ID = session['room_ID']) == session['user_id']:
+        db.execute("UPDATE game SET p1_answered = p1_answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+    else:
+        db.execute("UPDATE game SET p2_answered = p2_answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
+
+    print(db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0].values())
+
     while db.execute("SELECT p1_answered + p2_answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
         wait()
     db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID and completed = 0", room_ID = session['room_ID'])
