@@ -11,6 +11,9 @@ import time
 from time import sleep
 import datetime
 from passlib.apps import custom_app_context as pwd_context
+import smtplib
+import os
+import ssl
 
 db = SQL("sqlite:///dojo.db")
 
@@ -117,3 +120,72 @@ The DoJoTrivia Team"""
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
 
+def send_contact_mail(email):
+    """
+    Sends email from contact form
+    """
+
+    port = 587
+    smtp_server = "smtp.gmail.com"
+    sender_email = "dojopython.webik@gmail.com"
+    receiver_email = email
+    password = "webik2019_"
+    message = """\
+Subject: Thank you for the feedback!
+Dear player,
+Thank you for the feedback, it will be taken into consideration!
+Sincerely,
+The DoJoTrivia Team"""
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.starttls(context=context)
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
+
+
+def get_match_history(user):
+    """
+    Return user's match history
+    """
+    # check if user has finished matches
+    match_history = db.execute("SELECT player_ID1, player_ID2, time, won_by FROM game WHERE completed == 1 AND (player_ID1 == :user_ID or player_ID2 == :user_ID) ORDER BY time DESC", user_ID = user)
+    if match_history:
+
+        # check for valid  matches
+        matchlist = [x for x in match_history if x['player_ID2'] != 'NULL' and x['player_ID1'] != x['player_ID2']]
+        match_history = []
+
+        # insert time finished, result and opponent into list
+        for x in matchlist:
+            appendage = {}
+            appendage['time'] = x['time'][5:-3]
+            if x['player_ID1'] == user:
+                appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID2'])[0]['username']
+            else:
+                appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID1'])[0]['username']
+            if x['won_by'] == session['username']:
+                appendage['win'] = 'Won'
+            elif x['won_by'] == 'Draw':
+                appendage['win'] = 'Draw'
+            else:
+                appendage['win'] = 'Lost'
+            match_history.append(appendage)
+    # prevent new users from causing errors
+    match_history += ['', '', '', '']
+
+    return match_history
+
+def get_wlr(user_ID, username):
+    """
+    Returns a user's wins losses, draws and win/loss ratio.
+    """
+    wlr = [len(db.execute("SELECT player_ID1 from game WHERE won_by = :username", username = username)),
+            len(db.execute("SELECT player_ID1 from game WHERE won_by != :username AND won_by != 'Draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", username = username, user_ID = user_ID)),
+            len(db.execute("SELECT player_ID1 from game WHERE won_by = 'Draw' AND (player_ID1 = :user_ID or player_ID2 = :user_ID) AND completed = 1", user_ID = user_ID))]
+    if wlr[1] == 0:
+        wlr.append(wlr[0]/1)
+    else:
+        wlr.append(wlr[0]/wlr[1])
+
+    return wlr
