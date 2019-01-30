@@ -359,19 +359,10 @@ def ending_game():
             userID = user_ID)
     room = room[0]['game_room']
 
-<<<<<<< HEAD
     wait()
     scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
     score_P1 = scores[0]['score_P1']
     score_P2 = scores[0]['score_P2']
-    score_P1 = int(score_P1)
-    score_P2 = int(score_P2)
-    print(type(score_P1))
-=======
-    scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE (completed == 0 and game_room == :room)")
-    score_P1 = scores[0]['score_P1']
-    score_P2 = scores[0]['score_P2']
->>>>>>> e05d1b0ac2d671d2d1e1fba34f8fd376302fdcd6
 
     if score_P1 > score_P2:
         playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
