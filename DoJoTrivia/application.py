@@ -135,6 +135,7 @@ def aboutus():
 def personal():
     # create match history
     match_history = db.execute("SELECT player_ID1, player_ID2, time, won_by FROM game WHERE completed == 1 AND (player_ID1 == :user_ID or player_ID2 == :user_ID) ORDER BY time DESC", user_ID = session['user_id'])
+    print(match_history)
     if match_history:
         matchlist = [x for x in match_history if x['player_ID2'] != 'NULL' and x['player_ID1'] != x['player_ID2']]
         match_history = []
@@ -145,16 +146,14 @@ def personal():
                 appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID2'])[0]['username']
             else:
                 appendage['opponent'] = db.execute("SELECT username FROM users WHERE user_ID = :opp_ID", opp_ID = x['player_ID1'])[0]['username']
-            if x['won_by'] == session['user_id']:
+            if x['won_by'] == session['username']:
                 appendage['win'] = 'Won'
-            elif x['won_by'] == x['player_ID2']:
-                appendage['win'] = 'Lost'
-            else:
+            elif x['won_by'] == 'Draw':
                 appendage['win'] = 'Draw'
+            else:
+                appendage['win'] = 'Lost'
             match_history.append(appendage)
-    elif not match_history:
-        match_history = ['', '', '', '']
-    print(match_history)
+    match_history += ['', '', '', '']
 
     # get wins, losses and ratio
     wlr = [len(db.execute("SELECT player_ID1 from game WHERE won_by = :user_ID", user_ID = session['user_id'])),
