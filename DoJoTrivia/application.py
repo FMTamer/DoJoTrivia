@@ -84,16 +84,9 @@ def login():
         if not get_username_field() or not get_password_field():
             return apology("Make sure to fill in all fields!")
 
-        # query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
-        # ensure username exists and password is correct
+        if login_authentication() == False:
+            return apology("Invalid username or password!")
 
-        if len(rows) != 1 or not pwd_context.verify(request.form.get("password"), rows[0]["hash_password"]):
-            return apology("Invalid username and or password!")
-
-        # remember which user has logged in
-        session["user_id"] = rows[0]["user_ID"]
-        session['username'] = rows[0]['username']
         return redirect(url_for("personal", username = session['username']))
     else:
         return redirect(url_for("/"))
@@ -104,7 +97,7 @@ def logout():
     Log user out.
     """
 
-    # forget any user_id
+    # forgets all the sessions
     session.clear()
 
     # redirect user to login form
@@ -139,15 +132,9 @@ The DoJoTrivia Team"""
 
 
 
-@app.route("/about-us", methods = ['GET', 'POST'])
+@app.route("/about-us")
 def aboutus():
-    if request.method == 'GET':
-        return render_template("about-us.html")
-    else:
-        db.execute("UPDATE game SET answered = answered + 1 WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])
-        while db.execute("SELECT answered FROM game WHERE completed == 0 AND game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < 2:
-            wait()
-        return render_template("results.html", answered = session['room_ID'])
+    return render_template("about-us.html")
 
 
 @app.route("/personal")
@@ -300,7 +287,7 @@ def creategame():
 def joingame():
     if request.method == "GET":
         # check if player is already in game
-        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = get_userID())
+        # rows = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session["user_id"])
         rows = ''
         if len(rows) == 0:
             return render_template("joining.html")
@@ -314,7 +301,7 @@ def joingame():
             # update database
             room_ID = session['room_ID']
             session['question_number'] = 0
-            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = get_userID(), room = session['room_ID'])
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = session["user_id"], room = session['room_ID'])
 
 
             # get question and answers from database
@@ -347,7 +334,7 @@ def joingame():
 @login_required
 def ending_game():
     time_stamp = get_timestamp()
-    user_ID = get_userID()
+    user_ID = session["user_id"]
     room = session['room_ID']
 
     scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
@@ -490,7 +477,7 @@ def wrong_answer():
 @login_required
 def retreat():
     time_stamp = get_timestamp()
-    user_ID = get_userID()
+    user_ID = session["user_id"]
     room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
             userID = user_ID)
     room = room[0]['game_room']
