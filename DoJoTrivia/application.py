@@ -140,9 +140,10 @@ def aboutus():
 @app.route("/personal")
 @login_required
 def personal():
-    #old_matches = db.execute("SELECT * FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session)
-    #print(matches)
-    return render_template("personal-page.html", username = session['username'])
+    players = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE completed == 1 and (player_ID1 == :userID or player_ID2 == :userID)", userID = session["user_id"])
+    for x in players:
+        if session["user_id"] == x['player_ID1'] or x['player_ID2']:
+            return render_template("personal-page.html", username = session['username'])
 
 
 
@@ -337,13 +338,12 @@ def ending_game():
     user_ID = session["user_id"]
     room = session['room_ID']
 
+    wait()
     scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
     score_P1 = scores[0]['score_P1']
     score_P2 = scores[0]['score_P2']
-    print(type(score_P1))
     score_P1 = int(score_P1)
     score_P2 = int(score_P2)
-    print(type(score_P1))
 
     if score_P1 > score_P2:
         playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room", room = room)
