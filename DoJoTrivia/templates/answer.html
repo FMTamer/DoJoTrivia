@@ -48,7 +48,7 @@
         <fieldset>
             <br>
             <div class="form-group">
-                <button class="btn btn-danger" type="submit">Give Up :(</button>
+                <button class="btn btn-danger" type="submit">Give Up</button>
             </div>
         </fieldset>
     </form>
@@ -112,17 +112,12 @@
                 document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Waiting for players</strong>';
             }
 
-            $( "#corhidden" ).click(function() {
-                  $( "#book" ).slideUp( "slow", function() {
+            $( ".next" ).click(function() {
+                  $( ".next" ).slideUp( 0, function() {
                     // Animation complete.
                   });
                 });
 
-            $( "#wronghidden" ).click(function() {
-                  $( "#book" ).slideUp( "slow", function() {
-                    // Animation complete.
-                  });
-                });
 
 
 
