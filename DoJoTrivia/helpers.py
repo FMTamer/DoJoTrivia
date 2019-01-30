@@ -196,3 +196,9 @@ def insert_quiz(quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer
     """
     db.execute("INSERT INTO quizzes (quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer3) VALUES (:quiz_title, :question, :cor_answer, :w_answer1, :w_answer2, :w_answer3)",
         quiz_title = quiz_title, question = question, cor_answer = cor_answer, w_answer1 = w_answer1, w_answer2 = w_answer2, w_answer3 = w_answer3)
+
+def get_quizzes():
+    """
+    Returns all options for quizzes, including random.
+    """
+    return ['Random']+list({x['quiz_title'] for x in db.execute("SELECT quiz_title FROM quizzes")})
