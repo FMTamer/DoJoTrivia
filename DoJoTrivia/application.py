@@ -163,10 +163,6 @@ def personal():
     #print(matches)
     return render_template("personal-page.html", username = session['username'])
 
-
-
-
-
 @app.route("/customquiz", methods = ['GET', 'POST'])
 @login_required
 def customquiz():
@@ -354,12 +350,11 @@ def joingame():
 @login_required
 def ending_game():
     time_stamp = get_timestamp()
-    user_ID = get_userID()
+    user_ID = session['user_id']
     room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
-            userID = user_ID)
+            userID = session['user_id'])
     room = room[0]['game_room']
 
-<<<<<<< HEAD
     wait()
     scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
     score_P1 = scores[0]['score_P1']
@@ -367,11 +362,7 @@ def ending_game():
     score_P1 = int(score_P1)
     score_P2 = int(score_P2)
     print(type(score_P1))
-=======
-    scores = db.execute("SELECT score_P1, score_P2 FROM game WHERE (completed == 0 and game_room == :room)")
-    score_P1 = scores[0]['score_P1']
-    score_P2 = scores[0]['score_P2']
->>>>>>> e05d1b0ac2d671d2d1e1fba34f8fd376302fdcd6
+
 
     if score_P1 > score_P2:
         playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE (completed == 0 and game_room == :room)", room = room)
