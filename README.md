@@ -1,4 +1,4 @@
-# DoJoTrivia# DoJoTrivia Readme
+# DoJoTrivia
 Door Musa Karim, Vedran Marinovic,  Frank Tamer
 ![In-game screenshot](https://i.gyazo.com/6cd6cdde53b7628f71c99089ac913275.png)
 ## Features
