@@ -37,6 +37,7 @@ Door Musa Karim, Vedran Marinovic,  Frank Tamer
 - HTML en CSS voor het spelen van quizzes.
 - Quizzes en Questions tabbellen in database gestructueerd en geüpdate.
 - Het opknappen van de code
+- JavaScript
 
 ##  Repository
 In de repository zijn de mappen 'DoJoTrivia' en 'Technisch ontwerp + voorstel te vinden', waarvan het laatste voor zich spreekt.
