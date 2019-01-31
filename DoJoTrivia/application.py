@@ -203,114 +203,29 @@ def ending_game():
 
 @app.route('/quizC', methods=['GET', 'POST'])
 def correct_answer():
-    # wait for other player
-
-    prev_answered = db.execute("SELECT total_answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
-    db.execute("UPDATE game SET answered = answered + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
-    p_answered = db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
-    while db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
-        wait()
-    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID", room_ID = session['room_ID'])
-
-
-    # update right scores
-    if db.execute("SELECT player_ID1 FROM game WHERE game_room = :room_ID" , room_ID = session["room_ID"])[0]['player_ID1'] == session['user_id']:
-        db.execute("UPDATE game SET score_P1 = score_P1 + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
-        print('poep')
-    elif db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id']:
-        print(db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID" , room_ID = session["room_ID"])[0]['player_ID2'] == session['user_id'])
-        db.execute("UPDATE game SET score_P2 = score_P2 + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
-        print('kech')
+    wait_for_player(session['room_ID'])
+    update_score(session['user_id'], session['room_ID'])
 
     # check if questions are left
     session['question_number'] += 1
     room_ID = session['room_ID']
-    if session['question_number'] < len(db.execute("SELECT * FROM questions WHERE game_room = :room_ID", room_ID = room_ID)):
-        question_number = session['question_number']
-
-
-        # get question and answers from database
-        quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
-        question = quiz['question']
-        wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
-        cor_answer = quiz['cor_answer']
-
-        # scramble answers
-        tempanswers = wrong_answers
-        tempanswers.append(cor_answer)
-        rempos = list(range(0, 4))
-        answers = {}
-        while rempos:
-            x = random.choice(rempos)
-            answers[x] = random.choice(tempanswers)
-            rempos.remove(x)
-            tempanswers.remove(answers[x])
-
+    if session['question_number'] < quiz_length(session['room_ID']):
+        answers, cor_answer, question = quiz_values(session['room_ID'], session['question_number'])
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
-    time_stamp = get_timestamp()
-    db.execute("UPDATE game SET time = :time_stamp WHERE game_room = :game_ID", time_stamp = time_stamp, game_ID = session['room_ID'])
+    insert_time(session['room_ID'])
     return redirect(url_for("ending_game"))
 
 @app.route('/quizW', methods=['GET', 'POST'])
 def wrong_answer():
-    # wait for other player
-    prev_answered = db.execute("SELECT total_answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
-    db.execute("UPDATE game SET answered = answered + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
-    p_answered = db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']
-    while db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered'] < prev_answered + 2 :
-        wait()
-    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID", room_ID = session['room_ID'])
+    wait_for_player(session['room_ID'])
 
-
+    # check if questions are left
     session['question_number'] += 1
     room_ID = session['room_ID']
-    if session['question_number'] < len(db.execute("SELECT * FROM questions WHERE game_room = :room_ID", room_ID = room_ID)):
-        question_number = session['question_number']
-
-
-        # get question and answers from database
-        quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
-        question = quiz['question']
-        wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
-        cor_answer = quiz['cor_answer']
-
-        # scramble answers
-        tempanswers = wrong_answers
-        tempanswers.append(cor_answer)
-        rempos = list(range(0, 4))
-        answers = {}
-        while rempos:
-            x = random.choice(rempos)
-            answers[x] = random.choice(tempanswers)
-            rempos.remove(x)
-            tempanswers.remove(answers[x])
-
+    if session['question_number'] < quiz_length(session['room_ID']):
+        answers, cor_answer, question = quiz_values(session['room_ID'], session['question_number'])
         return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
 
-    time_stamp = get_timestamp()
-    db.execute("UPDATE game SET time = :time_stamp WHERE game_room = :game_ID", time_stamp = time_stamp, game_ID = session['room_ID'])
+    insert_time(session['room_ID'])
     return redirect(url_for("ending_game"))
-
-@app.route("/retreat", methods=['POST'])
-@login_required
-def retreat():
-    time_stamp = get_timestamp()
-    user_ID = session["user_id"]
-    room = db.execute("SELECT game_room FROM game WHERE completed == 0 and (player_ID1 == :userID or player_ID2 == :userID)",
-            userID = user_ID)
-    room = room[0]['game_room']
-
-    check_ID = db.execute("SELECT player_ID1 FROM game WHERE game_room = :room",
-            room = room)
-
-    if user_ID in check_ID:
-        db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID2, completed = :completed WHERE game_room = :room",
-            score1 = 0, score2 = 10, time_stamp = time_stamp, completed = 1, room = room)
-    else:
-        db.execute("UPDATE game SET score_P1 = :score1, score_P2 = :score2, time = :time_stamp, won_by = player_ID1, completed = :completed WHERE game_room = :room",
-            score1 = 10, score2 = 0, time_stamp = time_stamp, completed = 1, room = room)
-    return render_template("results.html")
-
-
-

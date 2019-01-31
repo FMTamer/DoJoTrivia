@@ -327,3 +327,44 @@ def game_end(room):
     else:
         db.execute("UPDATE game SET won_by = :winner, completed = :completed WHERE game_room = :room", winner = 'Draw', completed = 1, room = room)
         return 'Draw'
+
+def wait_for_player(room):
+    """
+    Ensures players can't skip ahead of each other
+    """
+
+    # confirms answer in database
+    db.execute("UPDATE game SET answered = answered + 1 WHERE game_room == :room_ID", room_ID = room)
+
+    # check if other player has answered
+    prev_answered = db.execute("SELECT total_answered FROM game WHERE game_room == :room_ID", room_ID = room)[0]['total_answered']
+    while db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = room)[0]['answered'] < prev_answered + 2 :
+        wait()
+    db.execute("UPDATE game SET total_answered = answered WHERE game_room = :room_ID", room_ID = room)
+
+def update_score(user, room):
+    """
+    Updates the score of players
+    """
+    # add score to player 1
+    if db.execute("SELECT player_ID1 FROM game WHERE game_room = :room_ID" , room_ID = room)[0]['player_ID1'] == user:
+            db.execute("UPDATE game SET score_P1 = score_P1 + 1 WHERE game_room == :room_ID", room_ID = room)
+
+    # add score to player 2
+    elif db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID" , room_ID = room)[0]['player_ID2'] == user:
+        print(db.execute("SELECT player_ID2 FROM game WHERE game_room = :room_ID" , room_ID = room)[0]['player_ID2'] == user)
+        db.execute("UPDATE game SET score_P2 = score_P2 + 1 WHERE game_room == :room_ID", room_ID = room)
+
+
+def quiz_length(room):
+    """
+    Returns the length of a given room's quiz
+    """
+    return len(db.execute("SELECT * FROM questions WHERE game_room = :room_ID", room_ID = room))
+
+def insert_time(room):
+    """
+    Inserts time quiz ended into database
+    """
+    time_stamp = get_timestamp()
+    db.execute("UPDATE game SET time = :time_stamp WHERE game_room = :game_ID", time_stamp = time_stamp, game_ID = room)

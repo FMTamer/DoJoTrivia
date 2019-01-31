@@ -43,42 +43,8 @@
         </form>
     </div>
 
-
-    <!--<form action="{{ url_for('retreat') }}" name="retreating" method="post">-->
-    <!--    <fieldset>-->
-    <!--        <br>-->
-    <!--        <div class="form-group">-->
-    <!--            <button class="btn btn-danger" type="submit">Give Up</button>-->
-    <!--        </div>-->
-    <!--    </fieldset>-->
-    <!--</form>-->
-    <!--<strong class='h1'><h1 id='feedback'></h1></strong>-->
-
-
-
-
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-        // // Read JSON file
-        // var jsonfile = document.getElementById("getJSON").innerHTML;
-        // var quizlist = JSON.parse(jsonfile);
-
-        // document.getElementById('question').innerHTML = quizlist.q0[0];
-
-        // // Scramble answers
-        // // Init arrays for scrambling
-        // var idArray = ['answer0', 'answer1', 'answer2', 'answer3'];
-        // var answerArray = [quizlist.q0[2], quizlist.q0[1][0], quizlist.q0[1][1], quizlist.q0[1][2]];
-        // // Choose random position for answer and remove position from the possible positions
-        // while (idArray.length > 0) {
-        //     var ran = Math.floor(Math.random() * idArray.length);
-        //      var rans = Math.floor(Math.random() * answerArray.length);
-        //     document.getElementById(idArray[ran]).innerHTML = answerArray[rans];
-        //     idArray.splice(ran, 1);
-        //     answerArray.splice(rans, 1);
-        // };
-
-
 
         $( ".answer" ).click(function() {
             // remember selected answer
@@ -95,15 +61,14 @@
             }
         })
 
-            function waitmsg(){
-                document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Waiting for players</strong>';
-            }
+        function waitmsg(){
+            document.getElementById("maincon").innerHTML = '<strong class="h1 waitmsg">Waiting for players</strong>';
+        }
 
-            $( ".next" ).click(function() {
-                  $( ".next" ).slideUp( 0, function() {
-                    // Animation complete.
-                  });
-                });
+        $( ".next" ).click(function() {
+              $( ".next" ).slideUp( 0, function() {
+              });
+            });
 
 
 
