@@ -107,7 +107,7 @@ def send_register_mail(email):
     smtp_server = "smtp.gmail.com"
     sender_email = "dojopython.webik@gmail.com"
     receiver_email = email
-    password = "webik2019_"
+    password = "webik20182019"
     message = """\
 Subject: Welcome to DoJoTrivia!
 Welcome new player,
@@ -130,7 +130,7 @@ def send_contact_mail(email):
     smtp_server = "smtp.gmail.com"
     sender_email = "dojopython.webik@gmail.com"
     receiver_email = email
-    password = "webik2019_"
+    password = "webik20182019"
     message = """\
 Subject: Thank you for the feedback!
 Dear player,
