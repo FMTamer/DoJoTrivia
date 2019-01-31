@@ -67,16 +67,17 @@ def empty_room(room_ID):
 
 def generate():
     """
-    <wat doet deze functie>
+    Generate unique room
     """
     room_ID = random.randint(1000,9999)
     checked_room = check_room()
 
-    # duidelijk maken
+    # check if generated room exists
     if room_ID not in checked_room:
         while room_ID in checked_room:
             room_ID = random.randint(1000,9999)
 
+    # insert player 1 into game
     db.execute("INSERT INTO game (player_ID1, score_P1, game_room, score_P2, time, won_by, player_ID2, completed) VALUES(':get_userID1', '0', ':room_ID', '0', 'NULL', 'NULL', 'NULL', '0')",
         get_userID1 = session["user_id"], room_ID = room_ID)
 
@@ -84,7 +85,7 @@ def generate():
 
 def insquote(string):
     string = string.replace('&quot;', "'").replace('&#039;', "'").replace('&shy;', '').replace('&aring;','å').replace('&rsquo;', "'").replace('&eacute;', "é").replace('&LDQUO;', "'")
-    return string.replace('&RDQUO;', "'").replace('&AMP;', '&')
+    return string.replace('&RDQUO;', "'").replace('&amp;', '&').replace("&Uuml", 'ü')
 
 def title_taken(title):
     if title in [y for x in [list(x.values()) for x in db.execute("SELECT quiz_title FROM quizzes")] for y in x]:
@@ -190,6 +191,7 @@ def get_wlr(user_ID, username):
 
     return wlr
 
+
 def insert_quiz(quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer3):
     """
     Inserts question and answers into database.
@@ -197,8 +199,94 @@ def insert_quiz(quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer
     db.execute("INSERT INTO quizzes (quiz_title, question, cor_answer, w_answer1, w_answer2, w_answer3) VALUES (:quiz_title, :question, :cor_answer, :w_answer1, :w_answer2, :w_answer3)",
         quiz_title = quiz_title, question = question, cor_answer = cor_answer, w_answer1 = w_answer1, w_answer2 = w_answer2, w_answer3 = w_answer3)
 
+
 def get_quizzes():
     """
     Returns all options for quizzes, including random.
     """
     return ['Random']+list({x['quiz_title'] for x in db.execute("SELECT quiz_title FROM quizzes")})
+
+
+def random_quiz(room_ID):
+    """
+    Creates random quiz
+    """
+    # retrieve questions and answers from api
+    api_call = requests.get('https://opentdb.com/api.php?amount=10&type=multiple').json()['results']
+    quizzes = [x for x in api_call]
+    for x in quizzes:
+        del x['category'], x['type'], x['difficulty']
+
+    # insert questions into database
+    q_ID = 0
+    for x in quizzes:
+        question = insquote(x['question'])
+        correct_answer = insquote(x['correct_answer'])
+        wrong_answer = [insquote(y)for y in x['incorrect_answers']]
+
+
+        db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)",
+    room_ID = room_ID, wa1 = wrong_answer[0], wa2 = wrong_answer[1], wa3 = wrong_answer[2], ca = correct_answer, quest = question, q_ID = q_ID)
+        q_ID += 1
+
+def selected_quiz(option, room_ID):
+    """"
+    Insert a selected quiz into the database.
+    """
+    # retrieve questions and answeres from database
+    sel_quiz = db.execute("SELECT question, cor_answer, w_answer1, w_answer2, w_answer3 FROM quizzes WHERE quiz_title = :q_title", q_title = option)
+
+    # paris questions and answers with right game room
+    q_ID = 0
+    for x in sel_quiz:
+        question = x['question']
+        correct_answer = x['cor_answer']
+        wrong_answer = [x['w_answer1'],  x['w_answer2'], x['w_answer3']]
+        print(question, correct_answer, wrong_answer)
+
+        db.execute("INSERT INTO questions (game_room, question, w_answer1, w_answer2, w_answer3, cor_answer, q_number) VALUES(:room_ID, :quest, :wa1, :wa2, :wa3, :ca, :q_ID)",
+    room_ID = room_ID, wa1 = wrong_answer[0], wa2 = wrong_answer[1], wa3 = wrong_answer[2], ca = correct_answer, quest = question, q_ID = q_ID)
+        q_ID += 1
+
+def quiz_values(room_ID, question_num):
+    """
+    Returns a list with the question, correct answer and wrong answers.
+    """
+     # get question and answers from database
+    quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = question_num)[0]
+    question = quiz['question']
+    wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
+    cor_answer = quiz['cor_answer']
+
+
+    # scramble answers
+    tempanswers = wrong_answers
+    tempanswers.append(cor_answer)
+    rempos = list(range(0, 4))
+    answers = {}
+    while rempos:
+        x = random.choice(rempos)
+        answers[x] = random.choice(tempanswers)
+        rempos.remove(x)
+        tempanswers.remove(answers[x])
+
+    return answers, cor_answer, question
+
+def insert_p2(user_ID, room_ID):
+    """
+    Inserts player 2 into the appropiate room
+    """
+    sessions = db.execute("SELECT player_ID2 FROM game WHERE game_room = :room", room = room_ID)
+    if sessions:
+        # check if session is full
+        print(sessions)
+        sessions = sessions[0]['player_ID2']
+        print(sessions, user_ID)
+        if sessions != 'NULL' and sessions != user_ID:
+            print('1st')
+            return False
+        else:
+            db.execute("UPDATE game SET player_ID2 = :user_ID2 WHERE game_room = :room", user_ID2 = user_ID, room = room_ID)
+            return True
+    if not sessions:
+        return False
