@@ -176,91 +176,35 @@ def joingame():
 
     session['room_ID'] = int(request.form.get("room_num"))
     session['question_number'] = 0
-    room_ID = session['room_ID']
 
     # join game
     if not insert_p2(session['user_id'], session['room_ID']):
         return apology('This room is full')
 
-    # get question and answers from database
-    quiz =  db.execute("SELECT question, w_answer1, w_answer2, w_answer3, cor_answer FROM questions WHERE game_room = :room_ID and q_number = :q_number", room_ID = room_ID, q_number = session['question_number'])[0]
-    question = quiz['question']
-    wrong_answers = [quiz['w_answer1'], quiz['w_answer2'], quiz['w_answer3']]
-    cor_answer = quiz['cor_answer']
-
-    # scramble answers
-    tempanswers = wrong_answers
-    tempanswers.append(cor_answer)
-    rempos = list(range(0, 4))
-    answers = {}
-    while rempos:
-        x = random.choice(rempos)
-        answers[x] = random.choice(tempanswers)
-        rempos.remove(x)
-        tempanswers.remove(answers[x])
-
+    answers, cor_answer, question = quiz_values(session['room_ID'], session['question_number'])
     return render_template('answer.html', room = session['room_ID'], answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3], coranswer = cor_answer, question = question)
-
-# @app.route("/makeq")
-# @login_required
-# def makeq():
-#       return render_template("makeq.html")
 
 @app.route("/results")
 @login_required
 def ending_game():
-    user_ID = session["user_id"]
-    room = session['room_ID']
+
     wait()
-    game_info = db.execute("SELECT time, score_P1, score_P2 FROM game WHERE game_room == :room", room = room)
+    game_info = db.execute("SELECT time, score_P1, score_P2 FROM game WHERE game_room == :room", room = session['room_ID'])
     time_stamp = game_info[0]['time']
     score_P1 = game_info[0]['score_P1']
     score_P2 = game_info[0]['score_P2']
     score_P1 = int(score_P1)
     score_P2 = int(score_P2)
 
-    if score_P1 > score_P2:
-        playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room", room = room)
-        winnerID = playersID[0]['player_ID1']
-        other_player = playersID[0]['player_ID2']
-
-        winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
-        winner = winner[0]['username']
-        player1 = winner
-
-        player2 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
-        player2 = player2[0]['username']
-
-    elif score_P1 < score_P2:
-        playersID = db.execute("SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room", room = room)
-        winnerID = playersID[0]['player_ID2']
-        other_player = playersID[0]['player_ID1']
-
-        winner = db.execute("SELECT username FROM users WHERE user_ID == :winnerID", winnerID = winnerID)
-        winner = winner[0]['username']
-        player2 = winner
-
-        player1 = db.execute("SELECT username FROM users WHERE user_ID == :other_player", other_player = other_player)
-        player1 = player1[0]['username']
-    else:
-        db.execute("UPDATE game SET won_by = :winner, completed = :completed WHERE game_room = :room", winner = 'Draw', completed = 1, room = room)
-        return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Draw")
-
-    db.execute("UPDATE game SET won_by = :winner , completed = :completed WHERE game_room = :room", winner = winner, completed = 1, room = room)
-    return render_template("results.html", room = room, time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = winner, username1 = player1 , username2 = player2)
-
-
-
-@app.route("/answer", methods=['GET', 'POST'])
-@login_required
-def answer():
-    if request.method == 'GET':
-        return render_template("answer.html", test = answers, question = question, answer0 = answers[0], answer1 = answers[1], answer2 = answers[2], answer3 = answers[3],
-        coranswer = coranswer)
+    results = game_end(session['room_ID'])
+    if results == 'Draw':
+        return render_template("results.html", room = session['room_ID'], time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = "Draw")
+    return render_template("results.html", room = session['room_ID'], time = time_stamp, score_P1 = score_P1, score_P2 = score_P2, winner = results[1], username1 = results[2] , username2 = results[3])
 
 @app.route('/quizC', methods=['GET', 'POST'])
 def correct_answer():
     # wait for other player
+
     prev_answered = db.execute("SELECT total_answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['total_answered']
     db.execute("UPDATE game SET answered = answered + 1 WHERE game_room == :room_ID", room_ID = session['room_ID'])
     p_answered = db.execute("SELECT answered FROM game WHERE game_room == :room_ID", room_ID = session['room_ID'])[0]['answered']

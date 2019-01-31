@@ -290,3 +290,40 @@ def insert_p2(user_ID, room_ID):
             return True
     if not sessions:
         return False
+
+def game_end(room):
+    """
+    Determines who won or if the game was a draw
+    """
+    # initialize queries
+    score_P1 = int(db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)[0]['score_P1'])
+    score_P2 = int(db.execute("SELECT score_P1, score_P2 FROM game WHERE game_room == :room", room = room)[0]['score_P2'])
+    select_ID = "SELECT player_ID1, player_ID2 FROM game WHERE game_room == :room"
+    select_username = "SELECT username FROM users WHERE user_ID == :ID"
+
+    # player 1 won
+    if score_P1 > score_P2:
+        playersID = db.execute(select_ID, room = room)
+        winnerID = playersID[0]['player_ID1']
+        other_player = playersID[0]['player_ID2']
+        winner = db.execute(select_username, ID = winnerID)[0]['username']
+        player1 = winner
+        player2 = db.execute(select_username, ID = other_player)[0]['username']
+        db.execute("UPDATE game SET won_by = :winner , completed = :completed WHERE game_room = :room", winner = winner, completed = 1, room = room)
+        return ['p1', winner, player1, player2]
+
+    # player 2 won
+    elif score_P1 < score_P2:
+        playersID = db.execute(select_ID, room = room)
+        winnerID = playersID[0]['player_ID2']
+        other_player = playersID[0]['player_ID1']
+        winner = db.execute(select_username, ID = winnerID)[0]['username']
+        player2 = winner
+        player1 = db.execute(select_username, ID = other_player)[0]['username']
+        db.execute("UPDATE game SET won_by = :winner , completed = :completed WHERE game_room = :room", winner = winner, completed = 1, room = room)
+        return ['p2', winner, player1, player2]
+
+    # draw
+    else:
+        db.execute("UPDATE game SET won_by = :winner, completed = :completed WHERE game_room = :room", winner = 'Draw', completed = 1, room = room)
+        return 'Draw'
