@@ -48,7 +48,7 @@ def register():
         if login_authentication() == False:
             return apology("Invalid username and/or password!")
 
-        # send_register_mail(request.form.get("emailaddress"))
+        send_register_mail(request.form.get("emailaddress"))
 
         return redirect(url_for("personal"))
 
@@ -80,7 +80,7 @@ def contact():
     if request.method == "GET":
         return render_template("contact.html")
 
-    # send_contact_mail(request.form.get("emailaddress"))
+    send_contact_mail(request.form.get("emailaddress"))
 
     return render_template("contacted.html")
 
