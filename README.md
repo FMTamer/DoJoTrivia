@@ -1,6 +1,9 @@
 # DoJoTrivia
 Door Musa Karim, Vedran Marinovic,  Frank Tamer
 ![In-game screenshot](https://i.gyazo.com/6cd6cdde53b7628f71c99089ac913275.png)
+### Product video:
+https://www.youtube.com/watch?v=I4fIRl-b6vs&feature=youtu.be
+
 ## Features
 - Realtime Multiplayer
 - Quizzes met voorafingestelde of willekeurige vragen
